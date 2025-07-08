@@ -2,7 +2,7 @@
 import { getUserConfig } from '../../config/index.mjs'
 import { fetchSSE } from '../../utils/fetch-sse.mjs'
 import { getConversationPairs } from '../../utils/get-conversation-pairs.mjs'
-import { isEmpty }_from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import { pushRecord, setAbortController } from './shared.mjs'
 
 /**
@@ -14,6 +14,27 @@ function convertToGeminiHistory(openAiHistory) {
     role: item.role === 'assistant' ? 'model' : item.role, // Gemini uses 'model' for assistant
     parts: [{ text: item.content }],
   }))
+}
+
+function getRequestPayload(geminiHistory, config, session) {
+  const payload = {
+    contents: geminiHistory,
+    generationConfig: {
+      temperature: config.temperature,
+      maxOutputTokens: config.maxResponseTokenLength,
+      // candidateCount: 1, // Default is 1
+    },
+    // safetySettings: [], // Optional: Add if specific safety settings are needed
+  }
+
+  const thinkingBudget = session.apiMode?.thinkingBudget ?? config.geminiThinkingBudget
+  if (thinkingBudget && thinkingBudget > 0) {
+    payload.generationConfig.thinkingConfig = {
+      includeThoughts: true,
+      thinkingBudget: parseInt(thinkingBudget, 10),
+    }
+  }
+  return payload
 }
 
 /**
@@ -49,7 +70,7 @@ export async function generateAnswersWithGeminiApi(
   let currentFullText = '' // Accumulates text from all parts of a candidate
   let finished = false
 
-  const finish = ()_=> {
+  const finish = () => {
     if (finished) return
     finished = true
     pushRecord(session, question, currentFullText)
@@ -63,15 +84,7 @@ export async function generateAnswersWithGeminiApi(
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      contents: geminiHistory,
-      generationConfig: {
-        temperature: config.temperature,
-        maxOutputTokens: config.maxResponseTokenLength,
-        // candidateCount: 1, // Default is 1
-      },
-      // safetySettings: [], // Optional: Add if specific safety settings are needed
-    }),
+    body: JSON.stringify(getRequestPayload(geminiHistory, config, session)),
     onMessage(message) {
       console.debug('Gemini SSE message', message)
       if (finished) return

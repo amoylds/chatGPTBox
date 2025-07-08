@@ -27,6 +27,7 @@ const defaultApiMode = {
   customName: '',
   customUrl: 'http://localhost:8000/v1/chat/completions',
   apiKey: '',
+  thinkingBudget: 0,
   active: true,
 }
 
@@ -106,6 +107,7 @@ export function ApiModes({ config, updateConfig }) {
             if (newIsCustom) newItemName = 'custom'
 
             let newCustomUrl = editingApiMode.customUrl
+            let newThinkingBudget = editingApiMode.thinkingBudget ?? 0
             // When type changes, initialize URL for relevant types if user hasn't typed a URL yet,
             // or if it's a new item being added.
             const isNewUrlForNewOrUnchangedDefault = editingIndex === -1 || editingApiMode.customUrl === defaultApiMode.customUrl ||
@@ -117,6 +119,7 @@ export function ApiModes({ config, updateConfig }) {
             if (isNewUrlForNewOrUnchangedDefault) {
               if (newGroupName === 'geminiApiModelKeys') {
                 newCustomUrl = config.geminiApiUrl
+                newThinkingBudget = config.geminiThinkingBudget // Set default for Gemini
               } else if (newGroupName === 'customApiModelKeys') {
                 newCustomUrl = config.customModelApiUrl
               } else if (newGroupName === 'ollamaApiModelKeys') {
@@ -136,8 +139,8 @@ export function ApiModes({ config, updateConfig }) {
               itemName: newItemName,
               isCustom: newIsCustom,
               customUrl: newCustomUrl,
-              // Reset API key if the group changes to one that doesn't need it, or from one that did
               apiKey: CustomApiKeyGroups.includes(newGroupName) ? editingApiMode.apiKey : '',
+              thinkingBudget: newGroupName === 'geminiApiModelKeys' ? newThinkingBudget : 0, // Reset if not Gemini
             })
           }}
         >
@@ -194,6 +197,24 @@ export function ApiModes({ config, updateConfig }) {
             onChange={(e) => setEditingApiMode({ ...editingApiMode, apiKey: e.target.value })}
           />
         )}
+      {editingApiMode.groupName === 'geminiApiModelKeys' && (
+        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', whiteSpace: 'noWrap' }}>
+          {t('Thinking Budget')}
+          <input
+            type="number"
+            value={editingApiMode.thinkingBudget || 0}
+            placeholder={t('e.g., 1024')}
+            min="0"
+            step="1"
+            onChange={(e) =>
+              setEditingApiMode({
+                ...editingApiMode,
+                thinkingBudget: parseInt(e.target.value, 10) || 0,
+              })
+            }
+          />
+        </div>
+      )}
     </div>
   )
 

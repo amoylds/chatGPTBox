@@ -333,6 +333,7 @@ export const defaultConfig = {
 
   geminiApiUrl: 'https://generativelanguage.googleapis.com',
   geminiApiKey: '',
+  geminiThinkingBudget: 0,
 
   customModelApiUrl: 'http://localhost:8000/v1/chat/completions',
   customModelName: 'gpt-3.5-turbo',
