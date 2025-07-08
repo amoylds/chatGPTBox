@@ -58,6 +58,7 @@ export const chatgptApiModelKeys = [
   'chatgptApi4_128k_1106_preview',
   'chatgptApi4_128k_0125_preview',
 ]
+export const geminiApiModelKeys = ['geminiApi']
 export const customApiModelKeys = ['customModel']
 export const ollamaApiModelKeys = ['ollamaModel']
 export const azureOpenAiApiModelKeys = ['azureOpenAi']
@@ -93,9 +94,10 @@ export const AlwaysCustomGroups = [
   'ollamaApiModelKeys',
   'customApiModelKeys',
   'azureOpenAiApiModelKeys',
+  'geminiApiModelKeys',
 ]
-export const CustomUrlGroups = ['customApiModelKeys']
-export const CustomApiKeyGroups = ['customApiModelKeys']
+export const CustomUrlGroups = ['customApiModelKeys', 'geminiApiModelKeys']
+export const CustomApiKeyGroups = ['customApiModelKeys', 'geminiApiModelKeys']
 export const ModelGroups = {
   chatgptWebModelKeys: {
     value: chatgptWebModelKeys,
@@ -153,6 +155,10 @@ export const ModelGroups = {
   customApiModelKeys: {
     value: customApiModelKeys,
     desc: 'Custom Model',
+  },
+  geminiApiModelKeys: {
+    value: geminiApiModelKeys,
+    desc: 'Gemini (API)',
   },
 }
 
@@ -241,6 +247,8 @@ export const Models = {
   azureOpenAi: { value: '', desc: 'ChatGPT (Azure)' },
   waylaidwandererApi: { value: '', desc: 'Waylaidwanderer API (Github)' },
 
+  geminiApi: { value: 'gemini-pro', desc: 'Gemini (API, Pro)' }, // Default to gemini-pro
+
   poeAiWebSage: { value: 'Assistant', desc: 'Poe AI (Web, Assistant)' },
   poeAiWebGPT4: { value: 'gpt-4', desc: 'Poe AI (Web, GPT-4)' },
   poeAiWebGPT4_32k: { value: 'gpt-4-32k', desc: 'Poe AI (Web, GPT-4-32k)' },
@@ -322,6 +330,9 @@ export const defaultConfig = {
 
   /** @type {keyof ModelMode}*/
   modelMode: 'balanced',
+
+  geminiApiUrl: 'https://generativelanguage.googleapis.com',
+  geminiApiKey: '',
 
   customModelApiUrl: 'http://localhost:8000/v1/chat/completions',
   customModelName: 'gpt-3.5-turbo',
@@ -522,6 +533,10 @@ export function isUsingAzureOpenAiApiModel(configOrSession) {
 
 export function isUsingGithubThirdPartyApiModel(configOrSession) {
   return isInApiModeGroup(githubThirdPartyApiModelKeys, configOrSession)
+}
+
+export function isUsingGeminiApiModel(configOrSession) {
+  return isInApiModeGroup(geminiApiModelKeys, configOrSession)
 }
 
 export function isUsingCustomModel(configOrSession) {

@@ -33,6 +33,7 @@ import {
   isUsingClaudeWebModel,
   isUsingMoonshotApiModel,
   isUsingMoonshotWebModel,
+  isUsingGeminiApiModel,
 } from '../config/index.mjs'
 import '../_locales/i18n'
 import { openUrl } from '../utils/open-url'
@@ -49,6 +50,7 @@ import { generateAnswersWithBardWebApi } from '../services/apis/bard-web.mjs'
 import { generateAnswersWithClaudeWebApi } from '../services/apis/claude-web.mjs'
 import { generateAnswersWithMoonshotCompletionApi } from '../services/apis/moonshot-api.mjs'
 import { generateAnswersWithMoonshotWebApi } from '../services/apis/moonshot-web.mjs'
+import { generateAnswersWithGeminiApi } from '../services/apis/gemini-api.mjs'
 import { isUsingModelName } from '../utils/model-name-convert.mjs'
 
 function setPortProxy(port, proxyTabId) {
@@ -150,6 +152,19 @@ async function executeApi(session, port, config) {
     await generateAnswersWithGptCompletionApi(port, session.question, session, config.apiKey)
   } else if (isUsingGithubThirdPartyApiModel(session)) {
     await generateAnswersWithWaylaidwandererApi(port, session.question, session)
+  } else if (isUsingGeminiApiModel(session)) {
+    // session.apiMode will contain customName, customUrl, apiKey if set by user
+    const apiUrl = session.apiMode?.customUrl?.trim() || config.geminiApiUrl
+    const apiKey = session.apiMode?.apiKey?.trim() || config.geminiApiKey
+    const modelName = session.apiMode?.customName || config.Models[session.modelName]?.value || 'gemini-pro' // Fallback to default model value
+    await generateAnswersWithGeminiApi(
+      port,
+      session.question,
+      session,
+      apiUrl,
+      apiKey,
+      modelName,
+    )
   }
 }
 

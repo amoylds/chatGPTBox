@@ -98,12 +98,47 @@ export function ApiModes({ config, updateConfig }) {
         <select
           value={editingApiMode.groupName}
           onChange={(e) => {
-            const groupName = e.target.value
-            let itemName = ModelGroups[groupName].value[0]
-            const isCustom =
-              editingApiMode.itemName === 'custom' && !AlwaysCustomGroups.includes(groupName)
-            if (isCustom) itemName = 'custom'
-            setEditingApiMode({ ...editingApiMode, groupName, itemName, isCustom })
+            const newGroupName = e.target.value
+            let newItemName = ModelGroups[newGroupName].value[0]
+            const newIsCustom =
+              // Retain custom status if previous item was 'custom' and the new group also isn't an alwaysCustom one.
+              editingApiMode.itemName === 'custom' && !AlwaysCustomGroups.includes(newGroupName)
+            if (newIsCustom) newItemName = 'custom'
+
+            let newCustomUrl = editingApiMode.customUrl
+            // When type changes, initialize URL for relevant types if user hasn't typed a URL yet,
+            // or if it's a new item being added.
+            const isNewUrlForNewOrUnchangedDefault = editingIndex === -1 || editingApiMode.customUrl === defaultApiMode.customUrl ||
+                                         (editingApiMode.groupName === 'customApiModelKeys' && editingApiMode.customUrl === config.customModelApiUrl) ||
+                                         (editingApiMode.groupName === 'geminiApiModelKeys' && editingApiMode.customUrl === config.geminiApiUrl) ||
+                                         (editingApiMode.groupName === 'ollamaApiModelKeys' && editingApiMode.customUrl === config.ollamaEndpoint)
+
+
+            if (isNewUrlForNewOrUnchangedDefault) {
+              if (newGroupName === 'geminiApiModelKeys') {
+                newCustomUrl = config.geminiApiUrl
+              } else if (newGroupName === 'customApiModelKeys') {
+                newCustomUrl = config.customModelApiUrl
+              } else if (newGroupName === 'ollamaApiModelKeys') {
+                newCustomUrl = config.ollamaEndpoint // Ollama uses 'ollamaEndpoint' as its URL
+              } else if (!CustomUrlGroups.includes(newGroupName)) {
+                newCustomUrl = '' // Clear URL if the new type doesn't use one by default
+              } else {
+                // If it's a type that uses CustomUrlGroups but isn't special cased above,
+                // and we are resetting, use the defaultApiMode's URL.
+                newCustomUrl = defaultApiMode.customUrl
+              }
+            }
+
+            setEditingApiMode({
+              ...editingApiMode,
+              groupName: newGroupName,
+              itemName: newItemName,
+              isCustom: newIsCustom,
+              customUrl: newCustomUrl,
+              // Reset API key if the group changes to one that doesn't need it, or from one that did
+              apiKey: CustomApiKeyGroups.includes(newGroupName) ? editingApiMode.apiKey : '',
+            })
           }}
         >
           {Object.entries(ModelGroups).map(([groupName, { desc }]) => (
