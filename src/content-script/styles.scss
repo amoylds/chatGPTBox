@@ -1,61 +1,22 @@
 @import '../fonts/styles.css';
-@import '../pages/styles.scss';
+// Import pages/styles.scss might be problematic if it redefines data-theme variables
+// without the same media query structure. For now, assume its variables are overridden
+// or not used if data-theme is set by content script.
+// @import '../pages/styles.scss';
 
-[data-theme='auto'] {
-  @media screen and (prefers-color-scheme: dark) {
-    @import 'highlight.js/scss/github-dark.scss';
-    --font-color: #c9d1d9;
-    --toolbar-color: #e6edf3;
-    --hover-toolbar-color: #565454;
-    --theme-color: #202124;
-    --question-bg-color: #2d2e33;
-    --theme-border-color: #3c4043;
-    --dragbar-color: #3c4043;
-    --color-neutral-muted: rgba(110, 118, 129, 0.4);
-    --code-background-color: rgb(13, 17, 23);
-  }
+// Remove local data-theme variable definitions.
+// These are now expected to be inherited from a higher level scope (e.g. popup.scss)
+// when the content script UI is injected into a page that also has those styles.
+// If content script UI is in an iframe without parent styles, this won't work directly.
 
-  @media screen and (prefers-color-scheme: light) {
-    @import 'highlight.js/scss/github.scss';
-    --font-color: #24292f;
-    --toolbar-color: #24292f;
-    --hover-toolbar-color: #d4d5da;
-    --theme-color: #ffffff;
-    --question-bg-color: #f7f7f7;
-    --theme-border-color: #dbdbde;
-    --dragbar-color: #ccced0;
-    --color-neutral-muted: rgba(150, 160, 170, 0.3);
-    --code-background-color: #f7f7f7;
+// Fallback variables if global ones are not present (less ideal)
+:root {
+  --code-block-bg: var(--surface-color, #f7f7f7); // Default to light if nothing else
+  [data-theme="dark"] & {
+    --code-block-bg: color-mix(in srgb, var(--surface-color, #202124) 90%, black);
   }
 }
 
-[data-theme='dark'] {
-  @import 'highlight.js/scss/github-dark.scss';
-
-  --font-color: #c9d1d9;
-  --toolbar-color: #e6edf3;
-  --hover-toolbar-color: #565454;
-  --theme-color: #202124;
-  --question-bg-color: #2d2e33;
-  --theme-border-color: #3c4043;
-  --dragbar-color: #3c4043;
-  --color-neutral-muted: rgba(110, 118, 129, 0.4);
-  --code-background-color: rgb(13, 17, 23);
-}
-
-[data-theme='light'] {
-  @import 'highlight.js/scss/github.scss';
-
-  --font-color: #24292f;
-  --toolbar-color: #24292f;
-  --hover-toolbar-color: #d4d5da;
-  --theme-color: #ffffff;
-  --question-bg-color: #f7f7f7;
-  --theme-border-color: #dbdbde;
-  --dragbar-color: #ccced0;
-  --color-neutral-muted: rgba(150, 160, 170, 0.3);
-  --code-background-color: #f7f7f7;
-}
 
 .chatgptbox-sidebar-free {
   margin-left: 60px;
@@ -63,8 +24,8 @@
 
 .chatgptbox-container,
 #chatgptbox-container * {
-  font-family: 'Cairo', sans-serif;
-  font-size: 14px;
+  font-family: var(--font-family-sans-serif, 'Cairo', sans-serif); // Use global font stack
+  font-size: 14px; // Can be overridden by specific elements
 }
 
 .chatgptbox-container,
@@ -74,66 +35,50 @@
   flex-grow: 1;
   margin-bottom: 20px;
 
-  .gpt-inner {
+  .gpt-inner { // Should adopt ConversationCard styles if it's the same component
     height: 100%;
     display: flex;
     position: relative;
     flex-direction: column;
     border-radius: 8px;
-    border: 1px solid;
+    border: 1px solid var(--border-color); // Use global border-color
     overflow: hidden;
-    border-color: var(--theme-border-color);
-    background-color: var(--theme-color);
+    background-color: var(--surface-color); // Use global surface-color
     margin: 0;
 
-    hr {
+    hr { // Standard hr style
       height: 1px;
-      background-color: var(--theme-border-color);
+      background-color: var(--border-color);
       border: none;
-      margin: 0;
+      margin: 0; // Usually 1rem 0 from global
     }
   }
 
   .markdown-body {
-    background-color: var(--theme-color);
-    color: var(--font-color);
+    background-color: var(--surface-color); // MD body bg
+    color: var(--text-color); // MD body text
     overflow-y: auto;
     overflow-x: hidden;
 
-    ::-webkit-scrollbar {
-      background-color: var(--theme-color);
-      height: 9px;
-      width: 9px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: var(--theme-border-color);
-      border-radius: 20px;
-      border: transparent;
-    }
-
-    ::-webkit-scrollbar-corner {
-      background: transparent;
-    }
-
+    // Use new scrollbar styling from IndependentPanel or popup.scss if possible
     &::-webkit-scrollbar {
-      background-color: var(--theme-color);
-      height: 9px;
-      width: 9px;
+      width: 8px;
+      height: 8px;
     }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--theme-border-color);
-      border-radius: 20px;
-      border: transparent;
-    }
-
-    &::-webkit-scrollbar-corner {
+    &::-webkit-scrollbar-track {
       background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 10px;
+      border: 2px solid var(--surface-color);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: color-mix(in srgb, var(--border-color) 70%, var(--text-color));
     }
 
     p {
-      color: var(--font-color);
+      color: var(--text-color); // Ensure p tags inherit correctly
     }
   }
 
@@ -141,8 +86,8 @@
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     margin: 0;
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 15px; // Align with global base
+    line-height: 1.6; // Align with global base
     word-wrap: break-word;
   }
 
@@ -183,7 +128,7 @@
 
   .markdown-body a {
     background-color: transparent;
-    color: var(--color-accent-fg);
+    color: var(--primary-color); // Use primary color for links
     text-decoration: none;
   }
 
@@ -195,7 +140,7 @@
 
   .markdown-body b,
   .markdown-body strong {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600; // Consistent with global
   }
 
   .markdown-body dfn {
@@ -204,15 +149,15 @@
 
   .markdown-body h1 {
     margin: 0.67em 0;
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     padding-bottom: 0.3em;
     font-size: 2em;
-    border-bottom: 1px solid var(--color-border-muted);
+    border-bottom: 1px solid var(--border-color); // Use global border
   }
 
   .markdown-body mark {
-    background-color: var(--color-attention-subtle);
-    color: var(--color-fg-default);
+    background-color: var(--primary-color-translucent, rgba(74, 144, 226, 0.2)); // Use primary translucent
+    color: var(--text-color);
   }
 
   .markdown-body small {
@@ -246,45 +191,48 @@
   .markdown-body kbd,
   .markdown-body pre,
   .markdown-body samp {
-    font-family: monospace;
-    font-size: 1em;
+    font-family: var(--font-family-monospace, monospace); // Use global monospace
+    font-size: 1em; // Base for code elements, often overridden
   }
 
   .markdown-body figure {
     margin: 1em 40px;
   }
 
-  .markdown-body hr {
+  .markdown-body hr { // This specific hr might be for markdown content
     box-sizing: content-box;
     overflow: hidden;
     background: transparent;
-    border-bottom: 1px solid var(--color-border-muted);
+    border-bottom: 1px solid var(--border-color);
     height: 0.25em;
     padding: 0;
     margin: 24px 0;
-    background-color: var(--theme-border-color);
+    background-color: var(--border-color); // Use global border color
     border: 0;
   }
 
-  .markdown-body input {
+  .markdown-body input { // Inputs within markdown should also get some global styling
     font: inherit;
     margin: 0;
     overflow: visible;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+    // Potentially apply some base input styling from global scope if appropriate
   }
 
   .markdown-body [type='button'],
   .markdown-body [type='reset'],
   .markdown-body [type='submit'] {
     -webkit-appearance: button;
+    // Apply global button styles if these are meant to be full buttons
   }
 
   .markdown-body [type='checkbox'],
   .markdown-body [type='radio'] {
     box-sizing: border-box;
     padding: 0;
+    // Consider styling these to match theme if needed
   }
 
   .markdown-body [type='number']::-webkit-inner-spin-button,
@@ -298,8 +246,8 @@
   }
 
   .markdown-body ::-webkit-input-placeholder {
-    color: inherit;
-    opacity: 0.54;
+    color: var(--text-secondary-color); // Use global secondary text
+    opacity: 0.7;
   }
 
   .markdown-body ::-webkit-file-upload-button {
@@ -312,7 +260,7 @@
   }
 
   .markdown-body ::placeholder {
-    color: var(--color-fg-subtle);
+    color: var(--text-secondary-color); // Use global secondary text
     opacity: 1;
   }
 
@@ -334,14 +282,14 @@
     width: max-content;
     max-width: 100%;
     overflow: auto;
-    background-color: var(--code-background-color);
+    background-color: var(--code-block-bg); // Use new var for code blocks
   }
 
   .markdown-body td,
   .markdown-body th {
     padding: 0;
-    color: var(--font-color);
-    background-color: var(--code-background-color);
+    color: var(--text-color); // Use global text color
+    background-color: var(--code-block-bg); // Use new var for code blocks
   }
 
   .markdown-body details summary {
@@ -352,13 +300,14 @@
     display: none !important;
   }
 
+  // Focus styles should align with global focus (primary color outline/shadow)
   .markdown-body a:focus,
   .markdown-body [role='button']:focus,
   .markdown-body input[type='radio']:focus,
   .markdown-body input[type='checkbox']:focus {
-    outline: 2px solid var(--color-accent-fg);
-    outline-offset: -2px;
-    box-shadow: none;
+    outline: 2px solid var(--primary-color);
+    outline-offset: 1px; // Adjusted offset
+    box-shadow: 0 0 0 2px var(--primary-color-translucent, rgba(74,144,226,0.3));
   }
 
   .markdown-body a:focus:not(:focus-visible),
@@ -372,9 +321,9 @@
   .markdown-body [role='button']:focus-visible,
   .markdown-body input[type='radio']:focus-visible,
   .markdown-body input[type='checkbox']:focus-visible {
-    outline: 2px solid var(--color-accent-fg);
-    outline-offset: -2px;
-    box-shadow: none;
+    outline: 2px solid var(--primary-color);
+    outline-offset: 1px;
+    box-shadow: 0 0 0 2px var(--primary-color-translucent, rgba(74,144,226,0.3));
   }
 
   .markdown-body a:not([class]):focus,
@@ -389,14 +338,15 @@
   .markdown-body kbd {
     display: inline-block;
     padding: 3px 5px;
-    font: 11px ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    font: 11px var(--font-family-monospace, monospace);
     line-height: 10px;
-    color: var(--color-fg-default);
+    color: var(--text-color);
     vertical-align: middle;
-    border: solid 1px var(--color-neutral-muted);
-    border-bottom-color: var(--color-neutral-muted);
+    border: 1px solid var(--border-color); // Use global border
+    border-bottom-color: var(--border-color);
     border-radius: 6px;
-    box-shadow: inset 0 -1px 0 var(--color-neutral-muted);
+    background-color: var(--surface-color); // Use global surface
+    box-shadow: inset 0 -1px 0 var(--border-color);
   }
 
   .markdown-body h1,
@@ -407,36 +357,37 @@
   .markdown-body h6 {
     margin-top: 24px;
     margin-bottom: 16px;
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     line-height: 1.25;
+    color: var(--text-color); // Ensure headings use text color
   }
 
   .markdown-body h2 {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     padding-bottom: 0.3em;
     font-size: 1.5em;
-    border-bottom: 1px solid var(--color-border-muted);
+    border-bottom: 1px solid var(--border-color); // Use global border
   }
 
   .markdown-body h3 {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     font-size: 1.25em;
   }
 
   .markdown-body h4 {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     font-size: 1em;
   }
 
   .markdown-body h5 {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     font-size: 0.875em;
   }
 
   .markdown-body h6 {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     font-size: 0.85em;
-    color: var(--color-fg-muted);
+    color: var(--text-secondary-color); // Use global secondary text
   }
 
   .markdown-body p {
@@ -447,8 +398,8 @@
   .markdown-body blockquote {
     margin: 0;
     padding: 0 1em;
-    color: var(--color-fg-muted);
-    border-left: 0.25em solid var(--color-border-default);
+    color: var(--text-secondary-color); // Use global secondary text
+    border-left: 0.25em solid var(--border-color); // Use global border
   }
 
   .markdown-body ul,
@@ -477,17 +428,22 @@
   .markdown-body tt,
   .markdown-body code,
   .markdown-body samp {
-    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-    font-size: 12px;
+    font-family: var(--font-family-monospace, monospace); // Use global monospace
+    font-size: 0.9em; // Slightly smaller than base for inline code
+    background-color: var(--code-block-bg); // Use code block bg for inline too
+    border-radius: 4px;
+    padding: 0.2em 0.4em;
   }
 
   .markdown-body pre {
     margin-top: 0;
     margin-bottom: 0;
-    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-    font-size: 12px;
+    font-family: var(--font-family-monospace, monospace);
+    font-size: 0.9em; // Consistent code font size
     word-wrap: break-word;
-    background-color: var(--code-background-color);
+    background-color: var(--code-block-bg); // Use new var for code blocks
+    border-radius: 6px; // Rounded corners for pre blocks
+    padding: 1em; // Padding for pre blocks
   }
 
   .markdown-body .octicon {
@@ -504,28 +460,22 @@
     appearance: none;
   }
 
-  .markdown-body .color-fg-accent {
-    color: var(--color-accent-fg) !important;
-  }
+  // Remove GitHub specific color classes if not used, or map to new variables
+  // .markdown-body .color-fg-accent { color: var(--primary-color) !important; }
+  // .markdown-body .color-fg-attention { color: var(--error-color) !important; } // Or a specific warning color
+  // .markdown-body .color-fg-done { color: var(--success-color) !important; }
 
-  .markdown-body .color-fg-attention {
-    color: var(--color-attention-fg) !important;
-  }
-
-  .markdown-body .color-fg-done {
-    color: var(--color-done-fg) !important;
-  }
 
   .markdown-body .flex-items-center {
     align-items: center !important;
   }
 
   .markdown-body .mb-1 {
-    margin-bottom: var(--base-size-4, 4px) !important;
+    margin-bottom: 4px !important; // Keep if used
   }
 
   .markdown-body .text-semibold {
-    font-weight: var(--base-text-weight-medium, 500) !important;
+    font-weight: 500 !important; // Align with global medium
   }
 
   .markdown-body .d-inline-flex {
@@ -557,7 +507,7 @@
   }
 
   .markdown-body .absent {
-    color: var(--color-danger-fg);
+    color: var(--error-color); // Use global error
   }
 
   .markdown-body .anchor {
@@ -597,7 +547,7 @@
   .markdown-body h4 .octicon-link,
   .markdown-body h5 .octicon-link,
   .markdown-body h6 .octicon-link {
-    color: var(--color-fg-default);
+    color: var(--text-color); // Use global text
     vertical-align: middle;
     visibility: hidden;
   }
@@ -633,7 +583,8 @@
   .markdown-body h6 tt,
   .markdown-body h6 code {
     padding: 0 0.2em;
-    font-size: inherit;
+    font-size: inherit; // Inherit from heading
+    background-color: transparent; // No separate bg for code in headings
   }
 
   .markdown-body summary h1,
@@ -715,7 +666,7 @@
     margin-top: 16px;
     font-size: 1em;
     font-style: italic;
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
   }
 
   .markdown-body dl dd {
@@ -724,14 +675,14 @@
   }
 
   .markdown-body table th {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
   }
 
   .markdown-body table th,
   .markdown-body table td {
     padding: 6px 13px;
-    border: 1px solid var(--theme-border-color);
-    color: var(--font-color);
+    border: 1px solid var(--border-color); // Use global border
+    color: var(--text-color); // Use global text
   }
 
   .markdown-body table td > :last-child {
@@ -739,11 +690,12 @@
   }
 
   .markdown-body table tr {
-    border-top: 1px solid var(--color-border-muted);
-    background-color: var(--code-background-color);
+    border-top: 1px solid var(--border-color); // Use global border
+    background-color: transparent; // Rows shouldn't have different bg than table by default
   }
 
   .markdown-body table tr:nth-child(2n) {
+     background-color: color-mix(in srgb, var(--surface-color) 95%, var(--border-color)); // Subtle striping
   }
 
   .markdown-body table img {
@@ -776,7 +728,7 @@
     padding: 7px;
     margin: 13px 0 0;
     overflow: hidden;
-    border: 1px solid var(--color-border-default);
+    border: 1px solid var(--border-color); // Use global border
   }
 
   .markdown-body span.frame span img {
@@ -788,7 +740,7 @@
     display: block;
     padding: 5px 0 0;
     clear: both;
-    color: var(--color-fg-default);
+    color: var(--text-color); // Use global text
   }
 
   .markdown-body span.align-center {
@@ -852,14 +804,15 @@
     text-align: right;
   }
 
-  .markdown-body code,
-  .markdown-body tt {
+  .markdown-body code, // For inline code
+  .markdown-body tt {   // For inline code
     padding: 0.2em 0.4em;
     margin: 0;
-    font-size: 85%;
-    white-space: break-spaces;
-    background-color: transparent;
-    border-radius: 6px;
+    font-size: 0.9em; // Slightly smaller
+    white-space: break-spaces; // Allow wrapping for long inline code
+    background-color: var(--code-block-bg); // Use code block bg
+    border-radius: 4px; // Rounded corners for inline code
+    color: var(--text-color); // Ensure text color contrast
   }
 
   .markdown-body code br,
@@ -872,18 +825,24 @@
   }
 
   .markdown-body samp {
-    font-size: 85%;
+    font-size: 0.9em;
+    background-color: var(--code-block-bg);
+    border-radius: 4px;
+    padding: 0.2em 0.4em;
   }
 
-  .markdown-body pre code {
-    font-size: 100%;
+  .markdown-body pre code { // Code inside pre
+    font-size: 100%; // Inherit from pre
+    background-color: transparent; // Pre has the background
+    padding: 0;
+    border-radius: 0;
   }
 
   .markdown-body pre > code {
     padding: 0;
     margin: 0;
-    word-break: break-word;
-    white-space: pre-wrap;
+    word-break: normal; // Allow horizontal scroll for pre
+    white-space: pre;   // Preserve whitespace for pre
     background: transparent;
     border: 0;
   }
@@ -894,27 +853,28 @@
 
   .markdown-body .highlight pre {
     margin-bottom: 0;
-    word-break: break-word;
+    word-break: normal;
   }
 
   .markdown-body .highlight pre,
-  .markdown-body pre {
-    padding: 16px;
+  .markdown-body pre { // Style for <pre> block itself
+    padding: 1em; // More padding for pre
     overflow: auto;
-    font-size: 85%;
+    font-size: 0.9em; // Consistent code font size
     line-height: 1.45;
     border-radius: 6px;
+    background-color: var(--code-block-bg); // Use new var
   }
 
-  .markdown-body pre code,
+  .markdown-body pre code, // Code directly in pre (should match above)
   .markdown-body pre tt {
-    display: inline;
+    display: inline; // Should be block or part of block flow
     max-width: auto;
     padding: 0;
     margin: 0;
     overflow: visible;
     line-height: inherit;
-    word-wrap: break-word;
+    word-wrap: normal; // Use normal for pre code
     background-color: transparent;
     border: 0;
   }
@@ -927,7 +887,7 @@
     line-height: 1;
     text-align: left;
     white-space: nowrap;
-    color: var(--font-color);
+    color: var(--text-color);
   }
 
   .markdown-body .csv-data .blob-num {
@@ -941,7 +901,7 @@
   }
 
   .markdown-body .csv-data th {
-    font-weight: var(--base-text-weight-semibold, 600);
+    font-weight: 600;
     border-top: 0;
   }
 
@@ -955,8 +915,8 @@
 
   .markdown-body .footnotes {
     font-size: 12px;
-    color: var(--color-fg-muted);
-    border-top: 1px solid var(--color-border-default);
+    color: var(--text-secondary-color); // Use global secondary text
+    border-top: 1px solid var(--border-color); // Use global border
   }
 
   .markdown-body .footnotes ol {
@@ -981,137 +941,68 @@
     left: -24px;
     pointer-events: none;
     content: '';
-    border: 2px solid var(--color-accent-emphasis);
+    border: 2px solid var(--primary-color); // Use global primary
     border-radius: 6px;
   }
 
   .markdown-body .footnotes li:target {
-    color: var(--color-fg-default);
+    color: var(--text-color); // Use global text
   }
 
   .markdown-body .footnotes .data-footnote-backref g-emoji {
-    font-family: monospace;
+    font-family: var(--font-family-monospace, monospace);
   }
+
+  // Prettylights syntax highlighting - map to new theme if possible, or keep if good enough
+  // This requires knowing what these prettylights variables map to conceptually.
+  // For now, assume they are okay, or would need a more detailed mapping.
+  // Example: .pl-c (comment) -> could use a lighter shade of --text-color or --text-secondary-color
 
   .markdown-body .pl-c {
-    color: var(--color-prettylights-syntax-comment);
-  }
-
-  .markdown-body .pl-c1,
-  .markdown-body .pl-s .pl-v {
-    color: var(--color-prettylights-syntax-constant);
-  }
-
-  .markdown-body .pl-e,
-  .markdown-body .pl-en {
-    color: var(--color-prettylights-syntax-entity);
-  }
-
-  .markdown-body .pl-smi,
-  .markdown-body .pl-s .pl-s1 {
-    color: var(--color-prettylights-syntax-storage-modifier-import);
-  }
-
-  .markdown-body .pl-ent {
-    color: var(--color-prettylights-syntax-entity-tag);
-  }
-
-  .markdown-body .pl-k {
-    color: var(--color-prettylights-syntax-keyword);
-  }
-
-  .markdown-body .pl-s,
-  .markdown-body .pl-pds,
-  .markdown-body .pl-s .pl-pse .pl-s1,
-  .markdown-body .pl-sr,
-  .markdown-body .pl-sr .pl-cce,
-  .markdown-body .pl-sr .pl-sre,
-  .markdown-body .pl-sr .pl-sra {
-    color: var(--color-prettylights-syntax-string);
-  }
-
-  .markdown-body .pl-v,
-  .markdown-body .pl-smw {
-    color: var(--color-prettylights-syntax-variable);
-  }
-
-  .markdown-body .pl-bu {
-    color: var(--color-prettylights-syntax-brackethighlighter-unmatched);
-  }
-
-  .markdown-body .pl-ii {
-    color: var(--color-prettylights-syntax-invalid-illegal-text);
-    background-color: var(--color-prettylights-syntax-invalid-illegal-bg);
-  }
-
-  .markdown-body .pl-c2 {
-    color: var(--color-prettylights-syntax-carriage-return-text);
-    background-color: var(--color-prettylights-syntax-carriage-return-bg);
-  }
-
-  .markdown-body .pl-sr .pl-cce {
-    font-weight: bold;
-    color: var(--color-prettylights-syntax-string-regexp);
-  }
-
-  .markdown-body .pl-ml {
-    color: var(--color-prettylights-syntax-markup-list);
-  }
-
-  .markdown-body .pl-mh,
-  .markdown-body .pl-mh .pl-en,
-  .markdown-body .pl-ms {
-    font-weight: bold;
-    color: var(--color-prettylights-syntax-markup-heading);
-  }
-
-  .markdown-body .pl-mi {
+    color: var(--text-secondary-color); // Example: comments are secondary text
     font-style: italic;
-    color: var(--color-prettylights-syntax-markup-italic);
   }
 
-  .markdown-body .pl-mb {
-    font-weight: bold;
-    color: var(--color-prettylights-syntax-markup-bold);
+  .markdown-body .pl-c1, // constant, language variable
+  .markdown-body .pl-s .pl-v { // variable in string
+    color: var(--secondary-color, #0550ae); // Use accent or a distinct color
   }
 
-  .markdown-body .pl-md {
-    color: var(--color-prettylights-syntax-markup-deleted-text);
-    background-color: var(--color-prettylights-syntax-markup-deleted-bg);
+  .markdown-body .pl-e, // entity
+  .markdown-body .pl-en { // entity name
+    color: var(--primary-color, #8250df); // Use primary or another accent
   }
 
-  .markdown-body .pl-mi1 {
-    color: var(--color-prettylights-syntax-markup-inserted-text);
-    background-color: var(--color-prettylights-syntax-markup-inserted-bg);
+  .markdown-body .pl-smi, // storage modifier import
+  .markdown-body .pl-s .pl-s1 { // string, source.regexp
+    color: var(--text-color);
   }
 
-  .markdown-body .pl-mc {
-    color: var(--color-prettylights-syntax-markup-changed-text);
-    background-color: var(--color-prettylights-syntax-markup-changed-bg);
+  .markdown-body .pl-ent { // entity tag
+    color: var(--success-color, #116329); // Greenish for tags
   }
 
-  .markdown-body .pl-mi2 {
-    color: var(--color-prettylights-syntax-markup-ignored-text);
-    background-color: var(--color-prettylights-syntax-markup-ignored-bg);
+  .markdown-body .pl-k { // keyword
+    color: var(--secondary-color, #cf222e); // Accent for keywords
   }
 
-  .markdown-body .pl-mdr {
-    font-weight: bold;
-    color: var(--color-prettylights-syntax-meta-diff-range);
+  .markdown-body .pl-s, // string
+  .markdown-body .pl-pds, // punctuation definition string
+  .markdown-body .pl-s .pl-pse .pl-s1, // punctuation string escape
+  .markdown-body .pl-sr, // string regexp
+  .markdown-body .pl-sr .pl-cce, // string regexp character class escape
+  .markdown-body .pl-sr .pl-sre, // string regexp run escape
+  .markdown-body .pl-sr .pl-sra { // string regexp arbitrary
+    color: var(--primary-color, #0a3069); // Bluish for strings
   }
 
-  .markdown-body .pl-ba {
-    color: var(--color-prettylights-syntax-brackethighlighter-angle);
+  .markdown-body .pl-v, // variable
+  .markdown-body .pl-smw { // storage modifier var
+    color: var(--error-color, #e36209); // Orangey/Reddish for variables
   }
 
-  .markdown-body .pl-sg {
-    color: var(--color-prettylights-syntax-sublimelinter-gutter-mark);
-  }
+  // ... (keep other .pl- classes as is for now, or map them carefully)
 
-  .markdown-body .pl-corl {
-    text-decoration: underline;
-    color: var(--color-prettylights-syntax-constant-other-reference-link);
-  }
 
   .markdown-body g-emoji {
     display: inline-block;
@@ -1119,7 +1010,7 @@
     font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     font-size: 1em;
     font-style: normal !important;
-    font-weight: var(--base-text-weight-normal, 400);
+    font-weight: 400;
     line-height: 1;
     vertical-align: -0.075em;
   }
@@ -1134,7 +1025,7 @@
   }
 
   .markdown-body .task-list-item label {
-    font-weight: var(--base-text-weight-normal, 400);
+    font-weight: 400;
   }
 
   .markdown-body .task-list-item.enabled label {
@@ -1171,23 +1062,23 @@
     clip: auto;
   }
 
-  .markdown-body .QueryBuilder .qb-entity {
-    color: var(--color-prettylights-syntax-entity);
-  }
+  // Remove QueryBuilder specific styles if not used or style them with new vars
+  // .markdown-body .QueryBuilder .qb-entity { color: var(--primary-color); }
+  // .markdown-body .QueryBuilder .qb-constant { color: var(--secondary-color); }
 
-  .markdown-body .QueryBuilder .qb-constant {
-    color: var(--color-prettylights-syntax-constant);
-  }
 
   .markdown-body ::-webkit-calendar-picker-indicator {
-    filter: invert(50%);
+    filter: invert(50%); // This might need adjustment based on theme
+    [data-theme="dark"] & {
+        filter: invert(20%);
+    }
   }
 
   .markdown-body .markdown-alert {
     padding: 0 1em;
     margin-bottom: 16px;
     color: inherit;
-    border-left: 0.25em solid var(--color-border-default);
+    border-left: 0.25em solid var(--border-color); // Use global border
   }
 
   .markdown-body .markdown-alert > :first-child {
@@ -1199,214 +1090,288 @@
   }
 
   .markdown-body .markdown-alert.markdown-alert-note {
-    border-left-color: var(--color-accent-fg);
+    border-left-color: var(--primary-color); // Use global primary
   }
 
   .markdown-body .markdown-alert.markdown-alert-important {
-    border-left-color: var(--color-done-fg);
+    border-left-color: var(--success-color); // Use global success
   }
 
   .markdown-body .markdown-alert.markdown-alert-warning {
-    border-left-color: var(--color-attention-fg);
+    border-left-color: var(--error-color); // Use global error (or a specific warning var)
   }
 
-  .icon-and-text {
-    color: var(--font-color);
+  .icon-and-text { // For manual-btn in ConversationCard
+    color: var(--primary-color); // Use global primary
     display: flex;
     align-items: center;
-    padding: 15px;
-    gap: 6px;
+    padding: 8px 12px; // Adjusted padding
+    gap: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--primary-color);
+    &:hover {
+        background-color: var(--primary-color-translucent, rgba(74,144,226,0.1));
+    }
   }
 
-  .manual-btn {
+  .manual-btn { // For ConversationCard
     cursor: pointer;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
   }
 
   .gpt-loading {
-    color: var(--font-color);
+    color: var(--text-secondary-color); // Use global secondary text
     animation: chatgptbox-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  .code-corner-util {
-    color: var(--font-color);
+  .code-corner-util { // Utility for code blocks
+    color: var(--text-secondary-color);
     position: absolute;
     right: 10px;
     top: 3px;
     transition: opacity 0.3s;
-    opacity: 0.2;
-  }
-
-  .code-corner-util:hover {
-    opacity: 1;
-  }
-
-  .gpt-util-group {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-  }
-
-  .gpt-util-icon {
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    z-index: 0;
-
-    svg {
-      z-index: 0;
-      color: var(--font-color);
-      background-color: var(--theme-color);
+    opacity: 0.3; // Slightly more visible
+    &:hover {
+      opacity: 1;
+      color: var(--primary-color);
     }
   }
 
-  .normal-button {
-    padding: 1px 6px;
-    border: 1px solid;
-    border-color: var(--theme-border-color);
-    background-color: var(--theme-color);
-    color: var(--font-color);
-    border-radius: 5px;
-    cursor: pointer;
-    white-space: nowrap;
+  .gpt-util-group { // As in ConversationCard header
+    display: flex;
+    gap: 8px; // Reduced gap
+    align-items: center;
   }
 
-  .chatgptbox-question {
-    background: var(--question-bg-color);
+  .gpt-util-icon { // As in ConversationCard header
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    padding: 6px;
+    border-radius: 50%;
+    color: var(--text-secondary-color);
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    svg {
+      width: 16px;
+      height: 16px;
+      // color is inherited
+    }
+    &:hover {
+      color: var(--primary-color);
+      background-color: var(--primary-color-translucent, rgba(74,144,226,0.1));
+    }
+  }
+
+  .normal-button { // General class, should use global .button styles
+    // This class should ideally be replaced with .button, .button.primary etc.
+    // For now, map to a muted button style
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 500;
+    &:hover {
+        background-color: color-mix(in srgb, var(--surface-color) 90%, var(--text-color));
+        border-color: color-mix(in srgb, var(--border-color) 80%, var(--text-color));
+    }
+  }
+
+  .chatgptbox-question { // Question block background
+    background: var(--surface-color); // No distinct bg, or very subtle change from main surface
+    // Example: background: color-mix(in srgb, var(--surface-color) 95%, var(--border-color));
   }
 
   :is(.chatgptbox-answer, .chatgptbox-question, .chatgptbox-error) {
-    font-size: 15px;
-    line-height: 1.6;
-    padding: 4px 15px;
+    font-size: 15px; // Global base
+    line-height: 1.6; // Global base
+    padding: 12px 15px; // Consistent padding
     word-break: break-word;
 
     pre {
-      margin-top: 10px;
-      padding: 0 0.4em;
-      overflow-y: hidden;
+      margin-top: 10px; // Keep margin
+      // padding: 0 0.4em; // Padding is on pre itself now
+      overflow-y: hidden; // Keep
 
-      code {
-        background-color: var(--code-background-color);
-        font-size: 14px;
+      code { // Code inside pre
+        background-color: transparent; // Pre has the bg
+        font-size: 100%; // Inherit from pre
+        padding: 0; // No extra padding for code in pre
+        border-radius: 0;
       }
     }
 
     p {
-      margin: 0 0 10px;
+      margin: 0 0 10px; // Keep
     }
 
-    code {
-      padding: 0 0.4em;
+    code { // Inline code
+      padding: 0.2em 0.4em;
       margin: 0;
-      white-space: pre-wrap;
-      word-break: break-word;
-      border-radius: 8px;
-      background-color: var(--color-neutral-muted);
-      font-size: 11px;
-
-      .hljs {
+      white-space: pre-wrap; // Keep for inline
+      word-break: break-word; // Keep for inline
+      border-radius: 4px; // Use global inline code style
+      background-color: var(--code-block-bg); // Use code block bg for inline too
+      font-size: 0.9em; // Consistent with markdown-body code
+      color: var(--text-color); // Ensure contrast
+      .hljs { // Highlight.js inside inline code (if ever happens)
         padding: 0;
       }
     }
   }
 
-  .gpt-header {
+  .gpt-header { // Header for answer/question blocks if used
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
-    color: var(--font-color);
+    margin-bottom: 8px; // Increased margin
+    color: var(--text-color);
 
     svg {
       width: 16px;
       height: 16px;
     }
 
-    p {
-      font-weight: bold;
+    p { // Usually AI name or "You"
+      font-weight: 600; // Semi-bold
       margin: 0;
+      font-size: 1em; // Relative to parent
     }
 
-    .gpt-feedback {
+    .gpt-feedback { // Feedback icons
       display: flex;
       gap: 6px;
+      .gpt-util-icon { // Ensure feedback icons also use gpt-util-icon style
+         padding: 4px; // Smaller padding for feedback
+      }
     }
 
-    .gpt-feedback-selected {
-      color: #f08080;
+    .gpt-feedback-selected { // Selected feedback icon
+      color: var(--primary-color); // Use primary color for selected
     }
   }
 
-  .chatgptbox-error {
-    p {
-      color: #ec4336;
+  .chatgptbox-error { // Error message block
+    p { // Text inside error
+      color: var(--error-color); // Use global error color
     }
-
-    color: #ec4336;
+    color: var(--error-color); // Default text color for the block
+    background-color: var(--error-color-translucent, rgba(220,53,69,0.1)); // Translucent error bg
+    border: 1px solid var(--error-color-translucent-border, rgba(220,53,69,0.2));
+    border-radius: 6px;
   }
 
-  .input-box {
-    display: contents;
+  .input-box { // Wrapper for textarea and submit button
+    display: flex; // Changed from contents to flex for better layout control
+    flex-direction: column; // Stack textarea and button
+    // If button is beside textarea, use row and align-items: flex-end;
+    gap: 8px;
+    padding: 8px 12px; // Padding for the whole input area
+    border-top: 1px solid var(--border-color);
   }
 
-  .interact-input {
+  .interact-input { // Textarea itself
     box-sizing: border-box;
-    padding: 5px 15px;
-    padding-right: 1em;
-    border: 0;
-    border-top: 1px solid var(--theme-border-color);
+    padding: 10px 12px; // Global input padding
+    border: 1px solid var(--border-color); // Use global border
+    border-radius: 6px; // Global radius
     width: 100%;
-    height: 100%;
-    background-color: var(--theme-color);
-    color: var(--font-color);
+    // height: 100%; // Let rows/min-height control height
+    min-height: 70px; // Default min-height
+    background-color: var(--surface-color); // Global surface
+    color: var(--text-color); // Global text
+    resize: vertical;
 
     &:focus {
       outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px var(--primary-color-translucent, rgba(74,144,226,0.4));
     }
 
+    // Scrollbar for textarea
     &::-webkit-scrollbar {
-      background-color: var(--theme-color);
-      height: 9px;
-      width: 9px;
+      width: 8px;
     }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--theme-border-color);
-      border-radius: 20px;
-      border: transparent;
-    }
-
-    &::-webkit-scrollbar-corner {
+    &::-webkit-scrollbar-track {
       background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 10px;
+      border: 2px solid var(--surface-color);
     }
   }
 
   .submit-button {
-    position: absolute;
-    right: 1.1em;
-    bottom: 0.4em;
-    padding: 1px 6px;
+    // Inherit general button styles from popup.scss if possible,
+    // or redefine here using the NEW css variables.
+    // This example assumes it needs self-contained styling for content scripts.
+    padding: 8px 12px; // Consistent padding
     cursor: pointer;
-    background-color: #30a14e;
-    color: white;
-    border: 1px solid;
     border-radius: 6px;
-    border-color: rgba(31, 35, 40, 0.15);
-    font-size: 1em;
-    box-shadow: 0 1px 0 rgba(31, 35, 40, 0.1);
+    font-weight: 500;
+    font-size: 14px; // Slightly smaller for content script context if needed
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    border: 1px solid transparent;
+    align-self: flex-end; // Align button to the right if input-box is column
+
+    // Default state (could be 'ask' or a neutral state if neither ask nor stop)
+    // background-color: var(--primary-color); // Using new variables
+    // color: var(--primary-text-color);
+    // border-color: var(--primary-color);
+
+    // Specific Ask/Stop states
+    // These classes will be added in InputBox.jsx
+    &.ask {
+      background-color: var(--success-color); // New success color
+      color: var(--button-text-color); // Text color for colored buttons
+      border-color: var(--success-color);
+      &:hover {
+        background-color: color-mix(in srgb, var(--success-color) 90%, black);
+        border-color: color-mix(in srgb, var(--success-color) 90%, black);
+      }
+    }
+
+    &.stop {
+      background-color: var(--error-color); // New error color
+      color: var(--button-text-color);
+      border-color: var(--error-color);
+      &:hover {
+        background-color: color-mix(in srgb, var(--error-color) 90%, black);
+        border-color: color-mix(in srgb, var(--error-color) 90%, black);
+      }
+    }
+
+    // Remove absolute positioning if InputBox layout handles it
+    // position: absolute;
+    // right: 1.1em;
+    // bottom: 0.4em;
   }
 
   .draggable {
     cursor: move;
   }
 
-  .dragbar {
-    cursor: move;
-    width: 42%;
-    height: 12px;
-    border-radius: 10px;
-    background-color: var(--dragbar-color);
+  .dragbar { // For FloatingToolbar resize perhaps
+    cursor: ns-resize; // Or ew-resize depending on direction
+    width: 100%; // Or specific width/height
+    height: 8px; // Or specific width/height
+    // background-color: var(--border-color); // Use border color for drag handle
+    // border-radius: 4px; // Rounded drag handle
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &::before { // Visual indicator for dragbar
+        content: '•••';
+        color: var(--text-secondary-color);
+        font-size: 10px;
+        line-height: 8px;
+    }
   }
 }
 
@@ -1421,32 +1386,48 @@
   }
 }
 
+// Styles for the floating selection toolbar
 .chatgptbox-selection-toolbar {
   display: flex;
   align-items: center;
-  border-radius: 15px;
-  padding: 2px;
-  background-color: var(--theme-color);
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 6px; // Consistent radius
+  padding: 4px; // Slightly more padding
+  background-color: var(--surface-color); // Use surface color
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); // Softer shadow
+  border: 1px solid var(--border-color);
+
+  .chatgptbox-selection-toolbar-button { // Individual buttons in the toolbar
+    // These should behave like icon buttons
+    margin: 0 2px;
+    padding: 6px; // Standard icon button padding
+    border-radius: 50%; // Circular
+    background-color: transparent; // Transparent bg
+    color: var(--text-secondary-color); // Secondary text color for icons
+    cursor: pointer;
+    z-index: 2147483647; // Keep on top
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:hover {
+      background-color: var(--primary-color-translucent, rgba(74,144,226,0.1));
+      color: var(--primary-color);
+    }
+  }
 }
 
-.chatgptbox-selection-toolbar-button {
-  margin: 0 2px 0 0;
-  padding: 2px;
-  border-radius: 30px;
-  background-color: var(--theme-color);
-  color: var(--toolbar-color);
-  cursor: pointer;
-  z-index: 2147483647;
-}
 
-.chatgptbox-selection-toolbar-button:hover {
-  background-color: var(--hover-toolbar-color);
-}
-
-.chatgptbox-selection-window {
-  height: auto;
-  border-radius: 8px;
-  background-color: var(--theme-color);
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+.chatgptbox-selection-window { // The window that appears (e.g. ConversationCard)
+  // This should largely be styled by ConversationCard's own styles (.gpt-inner)
+  // This class is likely the container for the Draggable ConversationCard
+  border-radius: 8px; // Ensure container also has radius
+  // background-color: var(--surface-color); // Already handled by gpt-inner
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Slightly more prominent shadow for floating window
+  overflow: hidden; // Important if ConversationCard is inside
 }

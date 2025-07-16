@@ -1,46 +1,20 @@
-[data-theme='auto'] {
-  @media screen and (prefers-color-scheme: dark) {
-    --font-color: #c9d1d9;
-    --font-active-color: #ffffff;
-    --theme-color: #202124;
-    --theme-border-color: #3c4043;
-    --active-color: #3c4043;
-  }
-  @media screen and (prefers-color-scheme: light) {
-    --font-color: #24292f;
-    --font-active-color: #cc3333;
-    --theme-color: #ffffff;
-    --theme-border-color: #aeafb2;
-    --active-color: #d0d4da;
-  }
-}
-
-[data-theme='dark'] {
-  --font-color: #c9d1d9;
-  --font-active-color: #ffffff;
-  --theme-color: #202124;
-  --theme-border-color: #3c4043;
-  --active-color: #3c4043;
-}
-
-[data-theme='light'] {
-  --font-color: #24292f;
-  --font-active-color: #cc3333;
-  --theme-color: #ffffff;
-  --theme-border-color: #aeafb2;
-  --active-color: #d0d4da;
-}
-
-.IndependentPanel * {
-  font-family: 'Cairo', sans-serif;
-  font-size: 14px;
-}
+// CSS Variables are now primarily defined in src/popup/styles.scss
+// and inherited here. We can add specific overrides if needed.
 
 .IndependentPanel {
+  // Use system fonts defined in popup.scss by default or override if necessary
+  // font-family: var(--font-family-sans-serif);
+  // font-size: 15px; // Base font size from popup.scss
+
+  height: 100vh; // Ensure panel takes full viewport height
+  display: flex; // Added for overall structure
+  background-color: var(--background-color); // Use new variable
+  color: var(--text-color); // Use new variable
+
   .chat-container {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: 100%; // Ensure it fills the IndependentPanel
   }
 
   .chat-sidebar {
@@ -48,78 +22,166 @@
     flex-direction: column;
     min-width: 250px;
     width: 250px;
-    background-color: var(--theme-color);
-    transition: width 0.3s, min-width 0.3s;
-    padding: 10px;
+    background-color: var(--surface-color); // Sidebar distinct background
+    border-right: 1px solid var(--border-color);
+    transition: width 0.2s ease-out, min-width 0.2s ease-out;
+    padding: 15px; // Increased padding
+    box-sizing: border-box;
 
-    ::-webkit-scrollbar {
-      background-color: var(--theme-color);
-      width: 9px;
+    // Custom scrollbar for the sidebar
+    &::-webkit-scrollbar {
+      width: 8px;
     }
-    ::-webkit-scrollbar-thumb {
-      background-color: var(--theme-border-color);
-      border-radius: 20px;
-      border: transparent;
+    &::-webkit-scrollbar-track {
+      background: transparent; // Or var(--surface-color)
     }
-    ::-webkit-scrollbar-corner {
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 10px;
+      border: 2px solid var(--surface-color); // Creates padding around thumb
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: color-mix(in srgb, var(--border-color) 70%, var(--text-color));
+    }
+    &::-webkit-scrollbar-corner {
       background: transparent;
     }
   }
 
   .chat-sidebar.collapsed {
-    min-width: 60px;
-    width: 60px;
+    min-width: 70px; // Slightly wider for icons
+    width: 70px;
+    padding: 15px 10px; // Adjust padding for collapsed state
+    align-items: center; // Center icons when collapsed
   }
 
-  .chat-sidebar:hover,
-  .chat-sidebar:not(.collapsed) {
-    min-width: 250px;
-    width: 250px;
+  // Hover effect only when not collapsed, to prevent unwanted expansion on icon hover
+  .chat-sidebar:not(.collapsed):hover {
+     // No change needed, expansion is manual via pin/unpin
   }
 
   .chat-sidebar-button-group {
     display: flex;
     flex-direction: column;
     padding: 0;
-    background-color: var(--theme-color);
-    gap: 15px;
+    gap: 10px; // Reduced gap
+
+    .normal-button, button { // Apply to all buttons in this group
+      // Styles inherited from popup.scss general button, or specific overrides here
+      // Example: Make sidebar buttons full width and use muted style by default
+      width: 100%;
+      &[aria-roledescription="muted"] { // Default style for sidebar buttons
+         background-color: var(--surface-color); // Or slightly different if sidebar is also surface
+         border-color: var(--border-color);
+         color: var(--text-color);
+         &:hover {
+           background-color: color-mix(in srgb, var(--surface-color) 90%, var(--text-color));
+           border-color: color-mix(in srgb, var(--border-color) 80%, var(--text-color));
+         }
+      }
+      &.primary { // For "New Chat" perhaps
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--primary-text-color);
+         &:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 90%, black);
+            border-color: color-mix(in srgb, var(--primary-color) 90%, black);
+         }
+      }
+    }
   }
+
+  .chat-sidebar.collapsed .chat-sidebar-button-group {
+    .normal-button span, button span { // Hide text if it's wrapped in a span
+      display: none;
+    }
+    .normal-button, button {
+      // Ensure icons are centered or appropriately displayed
+      // May need specific component changes to show only icons
+      // For now, assume text just overflows or is hidden by CSS if not in span
+    }
+  }
+
 
   .chat-list {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    padding: 0 2px 0 0;
-    background-color: var(--theme-color);
+    padding: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    gap: 15px;
+    gap: 8px; // Slightly reduced gap
+
+    // Styling for individual chat items (buttons)
+    .normal-button { // These are the chat session buttons
+      width: 100%;
+      min-height: 40px; // Keep min-height
+      padding: 8px 12px; // Adjusted padding
+      border: 1px solid transparent; // No border by default
+      background-color: transparent;
+      color: var(--text-secondary-color);
+      border-radius: 6px; // Consistent border-radius
+      cursor: pointer;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      text-align: left; // Align text to the left
+      display: flex; // For aligning text and delete icon
+      justify-content: space-between; // Push delete icon to the right
+      align-items: center;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--surface-color) 85%, var(--text-color)); // Subtle hover
+        color: var(--text-color);
+      }
+
+      &.active {
+        background-color: var(--primary-color-translucent, rgba(74, 144, 226, 0.15)); // Use a translucent primary for active
+        color: var(--primary-color);
+        font-weight: 500; // Medium weight for active item
+        // border-left: 3px solid var(--primary-color); // Alternative active indicator
+      }
+
+      // Ensure text part of button doesn't shrink when delete icon is present
+      span:first-child {
+        flex-grow: 1;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
   }
+
+  .chat-sidebar.collapsed .chat-list {
+    .normal-button {
+      justify-content: center; // Center content (likely an icon)
+      .gpt-util-group { // Hide delete button or other groups
+        display: none;
+      }
+      span:first-child { // Hide text
+         display:none;
+      }
+      // Add placeholder for icon if needed
+      // &::before { content: 'C'; /* Placeholder for Chat Icon */ }
+    }
+  }
+
 
   .chat-content {
     flex-grow: 1;
-    border: 1px solid var(--theme-border-color);
-    background-color: var(--theme-color);
+    // The border is removed here, ConversationCard will have its own border/shadow
+    // border: 1px solid var(--theme-border-color); // Old border
+    background-color: var(--background-color); // Main content area background
+    display: flex; // To help center or manage the ConversationCard
+    padding: 0; // Remove padding if ConversationCard handles its own spacing
+    overflow-y: hidden; // Prevent double scrollbars if ConversationCard is scrollable
   }
 
-  .normal-button {
-    width: 100%;
-    min-height: 40px;
-    padding: 1px 6px;
-    border: 1px solid;
-    border-color: var(--theme-border-color);
-    background-color: var(--theme-color);
-    color: var(--font-color);
-    border-radius: 5px;
-    cursor: pointer;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
+  // General utility icon styling within this panel
   .gpt-util-group {
     display: flex;
-    gap: 15px;
+    gap: 12px; // Adjusted gap
     align-items: center;
   }
 
@@ -127,21 +189,32 @@
     display: flex;
     cursor: pointer;
     align-items: center;
-    color: var(--font-color);
-  }
-  .gpt-util-icon:hover {
-    color: var(--font-active-color);
+    padding: 6px; // Add padding to make icons easier to click
+    border-radius: 50%; // Make icon buttons circular
+    color: var(--text-secondary-color);
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+    &:hover {
+      color: var(--primary-color);
+      background-color: var(--primary-color-translucent, rgba(74, 144, 226, 0.1));
+    }
+    svg { // Ensure SVGs are sized correctly
+      width: 16px;
+      height: 16px;
+    }
   }
 
-  .normal-button.active,
-  .normal-button:hover {
-    background-color: var(--active-color);
+  // Specific styling for DeleteButton if it's an icon
+  .gpt-util-group .DeleteButton .gpt-util-icon:hover {
+    color: var(--error-color);
+    background-color: var(--error-color-translucent, rgba(220, 53, 69, 0.1));
   }
+
 
   hr {
     height: 1px;
-    background-color: var(--theme-border-color);
+    background-color: var(--border-color);
     border: none;
-    margin: 15px 0;
+    margin: 15px 0; // Keep margin or adjust as needed
   }
 }

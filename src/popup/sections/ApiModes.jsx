@@ -63,9 +63,11 @@ export function ApiModes({ config, updateConfig }) {
   }
 
   const editingComponent = (
-    <div style={{ display: 'flex', flexDirection: 'column', '--spacing': '4px' }}>
+    // Added a class for potential specific styling of the editing form
+    <div className="api-mode-edit-form" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--pico-form-element-spacing-vertical, 1rem)' }}>
       <div style={{ display: 'flex', gap: '12px' }}>
         <button
+          className="button muted" // Added class
           onClick={(e) => {
             e.preventDefault()
             setEditing(false)
@@ -74,11 +76,12 @@ export function ApiModes({ config, updateConfig }) {
           {t('Cancel')}
         </button>
         <button
+          className="button primary" // Added class
           onClick={(e) => {
             e.preventDefault()
             if (editingIndex === -1) {
               updateConfig({
-                activeApiModes: [],
+                activeApiModes: [], // This seems to reset active modes, intentional?
                 customApiModes: [...apiModes, editingApiMode],
               })
             } else {
@@ -94,22 +97,20 @@ export function ApiModes({ config, updateConfig }) {
           {t('Save')}
         </button>
       </div>
-      <div style={{ display: 'flex', gap: '4px', alignItems: 'center', whiteSpace: 'noWrap' }}>
-        {t('Type')}
+      {/* Each form row can be a div with display:flex for alignment */}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <span style={{whiteSpace: 'nowrap'}}>{t('Type')}:</span>
         <select
           value={editingApiMode.groupName}
           onChange={(e) => {
             const newGroupName = e.target.value
             let newItemName = ModelGroups[newGroupName].value[0]
             const newIsCustom =
-              // Retain custom status if previous item was 'custom' and the new group also isn't an alwaysCustom one.
               editingApiMode.itemName === 'custom' && !AlwaysCustomGroups.includes(newGroupName)
             if (newIsCustom) newItemName = 'custom'
 
             let newCustomUrl = editingApiMode.customUrl
             let newThinkingBudget = editingApiMode.thinkingBudget ?? 0
-            // When type changes, initialize URL for relevant types if user hasn't typed a URL yet,
-            // or if it's a new item being added.
             const isNewUrlForNewOrUnchangedDefault = editingIndex === -1 || editingApiMode.customUrl === defaultApiMode.customUrl ||
                                          (editingApiMode.groupName === 'customApiModelKeys' && editingApiMode.customUrl === config.customModelApiUrl) ||
                                          (editingApiMode.groupName === 'geminiApiModelKeys' && editingApiMode.customUrl === config.geminiApiUrl) ||
@@ -119,16 +120,14 @@ export function ApiModes({ config, updateConfig }) {
             if (isNewUrlForNewOrUnchangedDefault) {
               if (newGroupName === 'geminiApiModelKeys') {
                 newCustomUrl = config.geminiApiUrl
-                newThinkingBudget = config.geminiThinkingBudget // Set default for Gemini
+                newThinkingBudget = config.geminiThinkingBudget
               } else if (newGroupName === 'customApiModelKeys') {
                 newCustomUrl = config.customModelApiUrl
               } else if (newGroupName === 'ollamaApiModelKeys') {
-                newCustomUrl = config.ollamaEndpoint // Ollama uses 'ollamaEndpoint' as its URL
+                newCustomUrl = config.ollamaEndpoint
               } else if (!CustomUrlGroups.includes(newGroupName)) {
-                newCustomUrl = '' // Clear URL if the new type doesn't use one by default
+                newCustomUrl = ''
               } else {
-                // If it's a type that uses CustomUrlGroups but isn't special cased above,
-                // and we are resetting, use the defaultApiMode's URL.
                 newCustomUrl = defaultApiMode.customUrl
               }
             }
@@ -140,7 +139,7 @@ export function ApiModes({ config, updateConfig }) {
               isCustom: newIsCustom,
               customUrl: newCustomUrl,
               apiKey: CustomApiKeyGroups.includes(newGroupName) ? editingApiMode.apiKey : '',
-              thinkingBudget: newGroupName === 'geminiApiModelKeys' ? newThinkingBudget : 0, // Reset if not Gemini
+              thinkingBudget: newGroupName === 'geminiApiModelKeys' ? newThinkingBudget : 0,
             })
           }}
         >
@@ -151,8 +150,8 @@ export function ApiModes({ config, updateConfig }) {
           ))}
         </select>
       </div>
-      <div style={{ display: 'flex', gap: '4px', alignItems: 'center', whiteSpace: 'noWrap' }}>
-        {t('Mode')}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <span style={{whiteSpace: 'nowrap'}}>{t('Mode')}:</span>
         <select
           value={editingApiMode.itemName}
           onChange={(e) => {
@@ -181,7 +180,7 @@ export function ApiModes({ config, updateConfig }) {
       </div>
       {CustomUrlGroups.includes(editingApiMode.groupName) &&
         (editingApiMode.isCustom || AlwaysCustomGroups.includes(editingApiMode.groupName)) && (
-          <input
+          <input // This input will take full width if not in a flex row with a label
             type="text"
             value={editingApiMode.customUrl}
             placeholder={t('API Url')}
@@ -198,8 +197,8 @@ export function ApiModes({ config, updateConfig }) {
           />
         )}
       {editingApiMode.groupName === 'geminiApiModelKeys' && (
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', whiteSpace: 'noWrap' }}>
-          {t('Thinking Budget')}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <span style={{whiteSpace: 'nowrap'}}>{t('Thinking Budget')}:</span>
           <input
             type="number"
             value={editingApiMode.thinkingBudget || 0}
@@ -227,7 +226,8 @@ export function ApiModes({ config, updateConfig }) {
           (editing && editingIndex === index ? (
             editingComponent
           ) : (
-            <label key={index} style={{ display: 'flex', alignItems: 'center' }}>
+            // Each API mode row is a label for checkbox, with flex for alignment
+            <label key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <input
                 type="checkbox"
                 checked={apiMode.active}
@@ -238,11 +238,12 @@ export function ApiModes({ config, updateConfig }) {
                   updateConfig({ activeApiModes: [], customApiModes })
                 }}
               />
-              {modelNameToDesc(apiModeToModelName(apiMode), t)}
-              <div style={{ flexGrow: 1 }} />
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <div
-                  style={{ cursor: 'pointer' }}
+              <span style={{flexGrow: 1}}>{modelNameToDesc(apiModeToModelName(apiMode), t)}</span>
+              {/* <div style={{ flexGrow: 1 }} /> */} {/* Replaced with flexGrow on span */}
+              <div style={{ display: 'flex', gap: '8px' }}> {/* Reduced gap for icons */}
+                <button // Changed div to button for accessibility and styling
+                  className="popup-icon-button"
+                  title={t("Edit")}
                   onClick={(e) => {
                     e.preventDefault()
                     setEditing(true)
@@ -251,9 +252,10 @@ export function ApiModes({ config, updateConfig }) {
                   }}
                 >
                   <PencilIcon />
-                </div>
-                <div
-                  style={{ cursor: 'pointer' }}
+                </button>
+                <button // Changed div to button
+                  className="popup-icon-button"
+                  title={t("Delete")}
                   onClick={(e) => {
                     e.preventDefault()
                     updateWhenApiModeDisabled(apiMode)
@@ -263,18 +265,19 @@ export function ApiModes({ config, updateConfig }) {
                   }}
                 >
                   <TrashIcon />
-                </div>
+                </button>
               </div>
             </label>
           )),
       )}
-      <div style={{ height: '30px' }} />
+      <div style={{ height: 'var(--pico-form-element-spacing-vertical, 1rem)' }} /> {/* Use variable for spacing */}
       {editing ? (
         editingIndex === -1 ? (
           editingComponent
         ) : undefined
       ) : (
         <button
+          className="button muted" // Added class
           onClick={(e) => {
             e.preventDefault()
             setEditing(true)

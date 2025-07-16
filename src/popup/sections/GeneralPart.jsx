@@ -104,6 +104,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
     config.customApiModes,
     config.azureDeploymentName,
     config.ollamaModelName,
+    config, // Added config as it's a broader dependency
   ])
 
   const getBalance = async () => {
@@ -127,6 +128,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         <legend>{t('Triggers')}</legend>
         <select
           required
+          value={config.triggerMode} // Controlled component
           onChange={(e) => {
             const mode = e.target.value
             updateConfig({ triggerMode: mode })
@@ -134,7 +136,8 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         >
           {Object.entries(TriggerMode).map(([key, desc]) => {
             return (
-              <option value={key} key={key} selected={key === config.triggerMode}>
+              // selected removed, rely on select value
+              <option value={key} key={key}>
                 {t(desc)}
               </option>
             )
@@ -145,6 +148,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         <legend>{t('Theme')}</legend>
         <select
           required
+          value={config.themeMode} // Controlled component
           onChange={(e) => {
             const mode = e.target.value
             updateConfig({ themeMode: mode })
@@ -152,7 +156,8 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         >
           {Object.entries(ThemeMode).map(([key, desc]) => {
             return (
-              <option value={key} key={key} selected={key === config.themeMode}>
+              // selected removed
+              <option value={key} key={key}>
                 {t(desc)}
               </option>
             )
@@ -160,31 +165,26 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         </select>
       </label>
       <label>
-        <legend style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <legend className="with-icon"> {/* Added class for styling legend with icon */}
           {t('API Mode')}
-          <div
-            style={{ cursor: 'pointer' }}
+          <span // Changed div to span for inline behavior with legend text
+            className="icon-wrapper popup-icon-button" // Added classes for styling
             onClick={(e) => {
               e.preventDefault()
               setTabIndex(2)
             }}
+            title={t('Edit API Modes')} // Added title for accessibility
           >
             <PencilIcon />
-          </div>
+          </span>
         </legend>
-        <span style="display: flex; gap: 15px;">
+        {/* Using input-group for better layout of select + input/button combos */}
+        <div className="input-group"> {/* Changed span to div with class */}
           <select
-            style={
-              isUsingOpenAiApiModel(config) ||
-              isUsingMultiModeModel(config) ||
-              isUsingSpecialCustomModel(config) ||
-              isUsingAzureOpenAiApiModel(config) ||
-              isUsingClaudeApiModel(config) ||
-              isUsingMoonshotApiModel(config)
-                ? 'width: 50%;'
-                : undefined
-            }
+            // style removed, width can be handled by flex-grow or specific class if needed
+            style={{flexBasis: '50%', flexGrow: 1}} // Example flex style
             required
+            value={apiModes.findIndex(apiMode => isApiModeSelected(apiMode, config))}
             onChange={(e) => {
               if (e.target.value === '-1') {
                 updateConfig({ modelName: 'customModel', apiMode: null })
@@ -199,20 +199,24 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
               const desc = modelNameToDesc(modelName, t)
               if (desc) {
                 return (
-                  <option value={index} key={index} selected={isApiModeSelected(apiMode, config)}>
+                  // selected removed
+                  <option value={index} key={index}>
                     {desc}
                   </option>
                 )
               }
+              return null;
             })}
-            <option value={-1} selected={!config.apiMode && config.modelName === 'customModel'}>
+            {/* selected removed */}
+            <option value={-1} >
               {t(Models.customModel.desc)}
             </option>
           </select>
           {isUsingMultiModeModel(config) && (
             <select
-              style="width: 50%;"
+              style={{flexBasis: '50%', flexGrow: 1}} // Example flex style
               required
+              value={config.modelMode} // Controlled
               onChange={(e) => {
                 const modelMode = e.target.value
                 updateConfig({ modelMode: modelMode })
@@ -220,7 +224,8 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
             >
               {Object.entries(ModelMode).map(([key, desc]) => {
                 return (
-                  <option value={key} key={key} selected={key === config.modelMode}>
+                  // selected removed
+                  <option value={key} key={key}>
                     {t(desc)}
                   </option>
                 )
@@ -228,7 +233,8 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
             </select>
           )}
           {isUsingOpenAiApiModel(config) && (
-            <span style="width: 50%; display: flex; gap: 5px;">
+            // Using input-group for this combo too
+            <div className="input-group" style={{flexBasis: '50%', flexGrow: 1}}>
               <input
                 type="password"
                 value={config.apiKey}
@@ -244,24 +250,24 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
                   target="_blank"
                   rel="nofollow noopener noreferrer"
                 >
-                  <button style="white-space: nowrap;" type="button">
+                  <button className="button muted" type="button"> {/* Added class */}
                     {t('Get')}
                   </button>
                 </a>
               ) : balance ? (
-                <button type="button" onClick={getBalance}>
+                <button className="button muted" type="button" onClick={getBalance}> {/* Added class */}
                   {balance}
                 </button>
               ) : (
-                <button type="button" onClick={getBalance}>
+                <button className="button muted" type="button" onClick={getBalance}> {/* Added class */}
                   {t('Balance')}
                 </button>
               )}
-            </span>
+            </div>
           )}
           {isUsingSpecialCustomModel(config) && (
             <input
-              style="width: 50%;"
+              style={{flexBasis: '50%', flexGrow: 1}}
               type="text"
               value={config.customModelName}
               placeholder={t('Model Name')}
@@ -274,7 +280,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
           {isUsingAzureOpenAiApiModel(config) && (
             <input
               type="password"
-              style="width: 50%;"
+              style={{flexBasis: '50%', flexGrow: 1}}
               value={config.azureApiKey}
               placeholder={t('Azure API Key')}
               onChange={(e) => {
@@ -286,7 +292,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
           {isUsingClaudeApiModel(config) && (
             <input
               type="password"
-              style="width: 50%;"
+              style={{flexBasis: '50%', flexGrow: 1}}
               value={config.claudeApiKey}
               placeholder={t('Claude API Key')}
               onChange={(e) => {
@@ -298,7 +304,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
           {isUsingChatGLMApiModel(config) && (
             <input
               type="password"
-              style="width: 50%;"
+              style={{flexBasis: '50%', flexGrow: 1}}
               value={config.chatglmApiKey}
               placeholder={t('ChatGLM API Key')}
               onChange={(e) => {
@@ -308,7 +314,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
             />
           )}
           {isUsingMoonshotApiModel(config) && (
-            <span style="width: 50%; display: flex; gap: 5px;">
+            <div className="input-group" style={{flexBasis: '50%', flexGrow: 1}}>
               <input
                 type="password"
                 value={config.moonshotApiKey}
@@ -324,14 +330,14 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
                   target="_blank"
                   rel="nofollow noopener noreferrer"
                 >
-                  <button style="white-space: nowrap;" type="button">
+                  <button className="button muted" type="button"> {/* Added class */}
                     {t('Get')}
                   </button>
                 </a>
               )}
-            </span>
+            </div>
           )}
-        </span>
+        </div> {/* End of .input-group */}
         {isUsingSpecialCustomModel(config) && (
           <input
             type="text"
@@ -355,7 +361,8 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
           />
         )}
         {isUsingOllamaApiModel(config) && (
-          <div style={{ display: 'flex', gap: '10px' }}>
+          // This div for radio buttons is a common pattern, styling should be fine
+          <div style={{ display: 'flex', gap: '10px', marginTop: '8px', flexWrap: 'wrap' }}>
             {t('Keep-Alive Time') + ':'}
             <label>
               <input
@@ -444,6 +451,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         <legend>{t('Preferred Language')}</legend>
         <select
           required
+          value={config.preferredLanguage} // Controlled
           onChange={(e) => {
             const preferredLanguageKey = e.target.value
             updateConfig({ preferredLanguage: preferredLanguageKey })
@@ -469,7 +477,8 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         >
           {Object.entries(languageList).map(([k, v]) => {
             return (
-              <option value={k} key={k} selected={k === config.preferredLanguage}>
+              // selected removed
+              <option value={k} key={k}>
                 {v.native}
               </option>
             )
@@ -480,23 +489,27 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
         <legend>{t('When Icon Clicked')}</legend>
         <select
           required
+          value={config.clickIconAction} // Controlled
           onChange={(e) => {
             const mode = e.target.value
             updateConfig({ clickIconAction: mode })
           }}
         >
-          <option value="popup" key="popup" selected={config.clickIconAction === 'popup'}>
+          {/* selected removed */}
+          <option value="popup" key="popup">
             {t('Open Settings')}
           </option>
           {Object.entries(menuConfig).map(([k, v]) => {
             return (
-              <option value={k} key={k} selected={k === config.clickIconAction}>
+              // selected removed
+              <option value={k} key={k}>
                 {t(v.label)}
               </option>
             )
           })}
         </select>
       </label>
+      {/* Checkbox labels are fine as they are, global styles will apply to the input */}
       <label>
         <input
           type="checkbox"
@@ -588,7 +601,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
       <br />
       <div style={{ display: 'flex', gap: '10px' }}>
         <button
-          className="secondary"
+          className="button muted" // Changed from secondary to muted for less emphasis
           onClick={async (e) => {
             e.preventDefault()
             const file = await new Promise((resolve) => {
@@ -611,7 +624,7 @@ export function GeneralPart({ config, updateConfig, setTabIndex }) {
           {t('Import All Data')}
         </button>
         <button
-          className="secondary"
+          className="button muted" // Changed from secondary to muted
           onClick={async (e) => {
             e.preventDefault()
             const blob = new Blob(
