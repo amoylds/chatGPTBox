@@ -1,5 +1,4 @@
 import './styles.scss'
-import { unmountComponentAtNode } from 'react-dom'
 import { render } from 'preact'
 import DecisionCard from '../components/DecisionCard'
 import { config as siteConfig } from './site-adapters'
@@ -64,7 +63,10 @@ async function mountComponent(siteConfig) {
     }
   }
   document.querySelectorAll('.chatgptbox-container,#chatgptbox-container').forEach((e) => {
-    unmountComponentAtNode(e)
+    const root = e._reactRoot
+    if (root) {
+      root.unmount()
+    }
     e.remove()
   })
 
@@ -73,7 +75,10 @@ async function mountComponent(siteConfig) {
   if (!question && siteConfig) question = await getInput(siteConfig.inputQuery)
 
   document.querySelectorAll('.chatgptbox-container,#chatgptbox-container').forEach((e) => {
-    unmountComponentAtNode(e)
+    const root = e._reactRoot
+    if (root) {
+      root.unmount()
+    }
     e.remove()
   })
 

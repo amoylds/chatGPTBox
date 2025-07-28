@@ -1,12 +1,10 @@
 import { useState, useEffect, cloneElement } from 'react'
 import { useTranslation } from 'react-i18next'
-import Draggable from 'react-draggable'
 import PropTypes from 'prop-types'
 import { useConfig } from '../../hooks/use-config.mjs'
 import { useClampWindowSize } from '../../hooks/use-clamp-window-size.mjs'
 import { getClientPosition } from '../../utils'
 import { config as toolsConfig } from '../../content-script/selection-tools'
-import ConversationCard from '../ConversationCard'
 import { ModernSelectionToolbar, ModernChatBox } from '../ModernUI'
 
 function ModernFloatingToolbar(props) {
@@ -15,7 +13,6 @@ function ModernFloatingToolbar(props) {
   const [prompt, setPrompt] = useState(props.prompt)
   const [triggered, setTriggered] = useState(props.triggered)
   const [render, setRender] = useState(false)
-  const [closeable, setCloseable] = useState(props.closeable)
   const [position, setPosition] = useState(getClientPosition(props.container))
   const [virtualPosition, setVirtualPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -42,8 +39,7 @@ function ModernFloatingToolbar(props) {
     setSelection(props.selection)
     setPrompt(props.prompt)
     setTriggered(props.triggered)
-    setCloseable(props.closeable)
-  }, [props.selection, props.prompt, props.triggered, props.closeable])
+  }, [props.selection, props.prompt, props.triggered])
 
   const onClose = () => {
     props.container.remove()
@@ -51,20 +47,6 @@ function ModernFloatingToolbar(props) {
 
   const onDock = () => {
     props.container.className = 'chatgptbox-toolbar-container-not-queryable'
-    setCloseable(true)
-  }
-
-  const onUpdate = (data) => {
-    if (data.conversation) {
-      setMessages(data.conversation.map(item => ({
-        type: item.author === 'user' ? 'user' : 'assistant',
-        content: item.text,
-        timestamp: new Date().toLocaleTimeString()
-      })))
-    }
-    if (data.done !== undefined) {
-      setIsGenerating(!data.done)
-    }
   }
 
   const handleSendMessage = async (message) => {

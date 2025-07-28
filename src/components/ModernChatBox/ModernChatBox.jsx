@@ -24,14 +24,19 @@ function ChatStatusIndicator({ status, text }) {
   )
 }
 
+ChatStatusIndicator.propTypes = {
+  status: PropTypes.oneOf(['online', 'thinking', 'typing', 'error', 'offline']),
+  text: PropTypes.string.isRequired
+}
+
 // 聊天头部栏组件
-function ModernChatHeader({ 
-  status, 
-  statusText, 
-  onMinimize, 
-  onClose, 
+function ModernChatHeader({
+  status,
+  statusText,
+  onMinimize,
+  onClose,
   isMinimized,
-  progress = 0 
+  progress = 0
 }) {
   const { t } = useTranslation()
 
@@ -72,6 +77,15 @@ function ModernChatHeader({
       )}
     </div>
   )
+}
+
+ModernChatHeader.propTypes = {
+  status: PropTypes.oneOf(['online', 'thinking', 'typing', 'error', 'offline']),
+  statusText: PropTypes.string,
+  onMinimize: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  isMinimized: PropTypes.bool,
+  progress: PropTypes.number
 }
 
 // 消息气泡组件
@@ -123,14 +137,22 @@ function MessageBubble({ message, type, timestamp, onCopy, onRegenerate }) {
   )
 }
 
+MessageBubble.propTypes = {
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+  type: PropTypes.oneOf(['user', 'assistant']).isRequired,
+  timestamp: PropTypes.string.isRequired,
+  onCopy: PropTypes.func,
+  onRegenerate: PropTypes.func
+}
+
 // 现代化输入框组件
-function ModernChatInput({ 
-  value, 
-  onChange, 
-  onSubmit, 
-  disabled, 
+function ModernChatInput({
+  value,
+  onChange,
+  onSubmit,
+  disabled,
   placeholder,
-  onStop 
+  onStop
 }) {
   const { t } = useTranslation()
   const textareaRef = useRef(null)
@@ -185,6 +207,15 @@ function ModernChatInput({
       </div>
     </div>
   )
+}
+
+ModernChatInput.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  placeholder: PropTypes.string,
+  onStop: PropTypes.func
 }
 
 // 主聊天框组件

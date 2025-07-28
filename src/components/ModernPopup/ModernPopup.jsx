@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useConfig } from '../../hooks/use-config.mjs'
-import { useTheme } from '../../hooks/use-theme.mjs'
+import PropTypes from 'prop-types'
 import Browser from 'webextension-polyfill'
 import './ModernPopup.scss'
 
@@ -23,6 +22,16 @@ function ModernTabNavigation({ activeTab, onTabChange, tabs }) {
   )
 }
 
+ModernTabNavigation.propTypes = {
+  activeTab: PropTypes.string.isRequired,
+  onTabChange: PropTypes.func.isRequired,
+  tabs: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    icon: PropTypes.string
+  })).isRequired
+}
+
 // 现代化品牌区域组件
 function ModernBrandSection({ version }) {
   return (
@@ -34,6 +43,10 @@ function ModernBrandSection({ version }) {
       <div className="version-badge">v{version}</div>
     </div>
   )
+}
+
+ModernBrandSection.propTypes = {
+  version: PropTypes.string.isRequired
 }
 
 // 现代化底部信息栏组件
@@ -84,6 +97,13 @@ function SettingCard({ title, description, children, className = '' }) {
   )
 }
 
+SettingCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string
+}
+
 // 现代化开关组件
 function ModernSwitch({ checked, onChange, label, description }) {
   return (
@@ -102,6 +122,13 @@ function ModernSwitch({ checked, onChange, label, description }) {
       </button>
     </div>
   )
+}
+
+ModernSwitch.propTypes = {
+  checked: PropTypes.bool.isRequired,
+  onChange: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
+  description: PropTypes.string
 }
 
 // 现代化选择器组件
@@ -148,11 +175,19 @@ function ModernSelect({ value, onChange, options, label, placeholder }) {
   )
 }
 
+ModernSelect.propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
+  })).isRequired,
+  label: PropTypes.string,
+  placeholder: PropTypes.string
+}
+
 // 主弹出窗口组件
 export function ModernPopup({ children, activeTab, onTabChange, tabs }) {
-  const { t } = useTranslation()
-  const [config] = useConfig()
-  const [theme] = useTheme()
   const [version, setVersion] = useState('')
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -166,7 +201,7 @@ export function ModernPopup({ children, activeTab, onTabChange, tabs }) {
   }, [])
 
   return (
-    <div className={`modern-popup ${isLoaded ? 'loaded' : ''}`} data-theme={theme}>
+    <div className={`modern-popup ${isLoaded ? 'loaded' : ''}`}>
       {/* 头部区域 */}
       <div className="popup-header">
         <ModernBrandSection version={version} />
@@ -194,6 +229,17 @@ export function ModernPopup({ children, activeTab, onTabChange, tabs }) {
       </div>
     </div>
   )
+}
+
+ModernPopup.propTypes = {
+  children: PropTypes.node.isRequired,
+  activeTab: PropTypes.string.isRequired,
+  onTabChange: PropTypes.func.isRequired,
+  tabs: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    icon: PropTypes.string
+  })).isRequired
 }
 
 // 导出所有组件

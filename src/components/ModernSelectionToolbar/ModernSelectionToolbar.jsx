@@ -4,14 +4,14 @@ import PropTypes from 'prop-types'
 import './ModernSelectionToolbar.scss'
 
 // 工具按钮组件
-function ToolButton({ 
-  icon, 
-  label, 
-  onClick, 
-  isLoading = false, 
+function ToolButton({
+  icon,
+  label,
+  onClick,
+  isLoading = false,
   status = 'default',
   shortcut,
-  className = '' 
+  className = ''
 }) {
   const [showTooltip, setShowTooltip] = useState(false)
   const buttonRef = useRef(null)
@@ -57,6 +57,16 @@ function ToolButton({
   )
 }
 
+ToolButton.propTypes = {
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
+  status: PropTypes.oneOf(['default', 'success', 'error', 'loading']),
+  shortcut: PropTypes.string,
+  className: PropTypes.string
+}
+
 // 工具分组组件
 function ToolGroup({ title, tools, onToolClick, loadingStates, toolStatuses }) {
   return (
@@ -80,6 +90,20 @@ function ToolGroup({ title, tools, onToolClick, loadingStates, toolStatuses }) {
   )
 }
 
+ToolGroup.propTypes = {
+  title: PropTypes.string,
+  tools: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    icon: PropTypes.node.isRequired,
+    label: PropTypes.string.isRequired,
+    shortcut: PropTypes.string,
+    className: PropTypes.string
+  })).isRequired,
+  onToolClick: PropTypes.func.isRequired,
+  loadingStates: PropTypes.object.isRequired,
+  toolStatuses: PropTypes.object.isRequired
+}
+
 // 进度指示器组件
 function ProgressIndicator({ progress, status, message }) {
   if (!message) return null
@@ -99,6 +123,12 @@ function ProgressIndicator({ progress, status, message }) {
       </div>
     </div>
   )
+}
+
+ProgressIndicator.propTypes = {
+  progress: PropTypes.number,
+  status: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired
 }
 
 // 主选择工具栏组件

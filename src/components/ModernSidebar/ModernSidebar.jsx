@@ -4,12 +4,12 @@ import PropTypes from 'prop-types'
 import './ModernSidebar.scss'
 
 // 对话项卡片组件
-function ConversationCard({ 
-  conversation, 
-  isActive, 
-  onClick, 
-  onDelete, 
-  onRename 
+function ConversationCard({
+  conversation,
+  isActive,
+  onClick,
+  onDelete,
+  onRename
 }) {
   const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
@@ -104,6 +104,20 @@ function ConversationCard({
   )
 }
 
+ConversationCard.propTypes = {
+  conversation: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    messageCount: PropTypes.number,
+    lastUpdated: PropTypes.string,
+    preview: PropTypes.string
+  }).isRequired,
+  isActive: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onRename: PropTypes.func.isRequired
+}
+
 // 搜索框组件
 function SearchBox({ value, onChange, placeholder }) {
   return (
@@ -133,6 +147,12 @@ function SearchBox({ value, onChange, placeholder }) {
       )}
     </div>
   )
+}
+
+SearchBox.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string
 }
 
 // 虚拟滚动列表组件
@@ -179,6 +199,13 @@ function VirtualizedList({
   )
 }
 
+VirtualizedList.propTypes = {
+  items: PropTypes.array.isRequired,
+  renderItem: PropTypes.func.isRequired,
+  itemHeight: PropTypes.number,
+  containerHeight: PropTypes.number
+}
+
 // 主侧边栏组件
 export function ModernSidebar({
   conversations = [],
@@ -188,7 +215,6 @@ export function ModernSidebar({
   onConversationRename,
   onNewConversation,
   isOpen = true,
-  onToggle,
   width = 380,
   className = ''
 }) {

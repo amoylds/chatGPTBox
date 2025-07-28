@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import {
   defaultConfig,
   getPreferredLanguageKey,
@@ -13,7 +14,7 @@ import { GeneralPart } from './sections/GeneralPart'
 import { FeaturePages } from './sections/FeaturePages'
 import { AdvancedPart } from './sections/AdvancedPart'
 import { ModulesPart } from './sections/ModulesPart'
-import { ModernPopup, ModernTabNavigation } from '../components/ModernUI'
+import { ModernPopup } from '../components/ModernUI'
 
 // 现代化底部信息组件
 function ModernFooter({ currentVersion, latestVersion }) {
@@ -69,6 +70,11 @@ function ModernFooter({ currentVersion, latestVersion }) {
       </div>
     </div>
   )
+}
+
+ModernFooter.propTypes = {
+  currentVersion: PropTypes.string.isRequired,
+  latestVersion: PropTypes.string.isRequired
 }
 
 function Popup() {
