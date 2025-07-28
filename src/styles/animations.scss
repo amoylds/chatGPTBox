@@ -1,0 +1,460 @@
+// 现代化动画系统
+// Modern Animation System for ChatGPTBox
+
+@import './design-tokens.scss';
+
+// ===== 关键帧动画定义 =====
+
+// 淡入动画
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// 淡出动画
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// 滑入动画 - 从下方
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// 滑入动画 - 从上方
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// 滑入动画 - 从左侧
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// 滑入动画 - 从右侧
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// 缩放淡入动画
+@keyframes fadeInScale {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 缩放淡出动画
+@keyframes fadeOutScale {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+// 弹跳进入动画
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 摇摆动画
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+// 脉冲动画
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 闪烁动画 (骨架屏效果)
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+// 旋转动画
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 加载点动画
+@keyframes loadingDots {
+  0%, 20% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+// 波纹效果
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+// ===== 动画工具类 =====
+
+// 基础动画类
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--ease-out) forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut var(--duration-normal) var(--ease-out) forwards;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp var(--duration-normal) var(--ease-out-cubic) forwards;
+}
+
+.animate-slide-in-down {
+  animation: slideInDown var(--duration-normal) var(--ease-out-cubic) forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft var(--duration-normal) var(--ease-out-cubic) forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--duration-normal) var(--ease-out-cubic) forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale var(--duration-normal) var(--ease-spring) forwards;
+}
+
+.animate-fade-out-scale {
+  animation: fadeOutScale var(--duration-normal) var(--ease-out) forwards;
+}
+
+.animate-bounce-in {
+  animation: bounceIn var(--duration-slow) var(--ease-bounce) forwards;
+}
+
+.animate-shake {
+  animation: shake var(--duration-slow) var(--ease-out);
+}
+
+.animate-pulse {
+  animation: pulse 2s var(--ease-in-out) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s var(--ease-linear) infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--theme-bg-secondary) 25%,
+    var(--theme-bg-tertiary) 50%,
+    var(--theme-bg-secondary) 75%
+  );
+  background-size: 200px 100%;
+  animation: shimmer 1.5s var(--ease-linear) infinite;
+}
+
+// 速度变体
+.animate-fast {
+  animation-duration: var(--duration-fast) !important;
+}
+
+.animate-slow {
+  animation-duration: var(--duration-slow) !important;
+}
+
+.animate-slower {
+  animation-duration: var(--duration-slower) !important;
+}
+
+// 延迟类
+.animate-delay-75 {
+  animation-delay: 75ms;
+}
+
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-150 {
+  animation-delay: 150ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+// ===== 过渡效果工具类 =====
+
+.transition-all {
+  transition: var(--transition-all);
+}
+
+.transition-colors {
+  transition: var(--transition-colors);
+}
+
+.transition-opacity {
+  transition: var(--transition-opacity);
+}
+
+.transition-transform {
+  transition: var(--transition-transform);
+}
+
+.transition-shadow {
+  transition: var(--transition-shadow);
+}
+
+// 过渡速度
+.transition-fast {
+  transition-duration: var(--duration-fast);
+}
+
+.transition-slow {
+  transition-duration: var(--duration-slow);
+}
+
+.transition-slower {
+  transition-duration: var(--duration-slower);
+}
+
+// ===== 交互状态动画 =====
+
+// 悬停效果
+.hover-lift {
+  transition: var(--transition-transform);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.hover-scale {
+  transition: var(--transition-transform);
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.hover-glow {
+  transition: var(--transition-shadow);
+  
+  &:hover {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+}
+
+// 点击效果
+.active-scale {
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.active-press {
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// ===== 性能优化 =====
+
+// 启用硬件加速
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+// 减少重绘
+.reduce-motion {
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// ===== 加载状态动画 =====
+
+.loading-dots {
+  display: inline-flex;
+  gap: 2px;
+  
+  &::before,
+  &::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: loadingDots 1.4s ease-in-out infinite both;
+  }
+  
+  &::before {
+    animation-delay: -0.32s;
+  }
+  
+  &::after {
+    animation-delay: -0.16s;
+  }
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--theme-border-primary);
+  border-top: 2px solid var(--primary-500);
+  border-radius: 50%;
+  animation: spin 1s var(--ease-linear) infinite;
+}
+
+// ===== 特殊效果 =====
+
+// 毛玻璃效果
+.glass-effect {
+  background: var(--theme-glass-bg);
+  backdrop-filter: var(--theme-backdrop-blur);
+  border: 1px solid var(--theme-glass-border);
+}
+
+// 浮动效果
+.floating {
+  animation: pulse 3s var(--ease-in-out) infinite;
+  box-shadow: var(--shadow-floating);
+}
+
+// 波纹点击效果
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
+}

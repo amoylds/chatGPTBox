@@ -1,0 +1,429 @@
+// 现代化弹出窗口样式
+@import '../../styles/design-tokens.scss';
+@import '../../styles/themes.scss';
+@import '../../styles/animations.scss';
+
+// ===== 主弹出窗口容器 =====
+.modern-popup {
+  display: flex;
+  flex-direction: column;
+  width: 480px;
+  height: 640px;
+  background: var(--theme-glass-bg);
+  backdrop-filter: var(--theme-backdrop-blur);
+  border: 1px solid var(--theme-glass-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--theme-shadow-xl);
+  overflow: hidden;
+  font-family: var(--font-primary);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all var(--duration-normal) var(--ease-spring);
+
+  &.loaded {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  // 响应式适配
+  @media (max-width: 768px) {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+// ===== 头部区域 =====
+.popup-header {
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  background: linear-gradient(135deg, 
+    var(--theme-bg-primary) 0%, 
+    var(--theme-bg-secondary) 100%);
+  border-bottom: 1px solid var(--theme-border-primary);
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.logo-modern {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-text {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.version-badge {
+  padding: var(--space-1) var(--space-3);
+  background: var(--theme-bg-tertiary);
+  color: var(--theme-text-secondary);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  border: 1px solid var(--theme-border-primary);
+}
+
+// ===== 导航区域 =====
+.popup-navigation {
+  padding: 0 var(--space-6);
+  background: var(--theme-bg-primary);
+}
+
+.modern-tab-navigation {
+  display: flex;
+  background: var(--theme-bg-secondary);
+  backdrop-filter: var(--theme-backdrop-blur);
+  border-radius: var(--radius-xl);
+  padding: var(--space-1);
+  box-shadow: var(--theme-shadow-sm);
+  border: 1px solid var(--theme-border-primary);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  border: none;
+  color: var(--theme-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out-cubic);
+  position: relative;
+
+  &:hover {
+    background: var(--theme-hover-bg);
+    color: var(--theme-text-primary);
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: var(--gradient-primary);
+    color: var(--theme-text-inverse);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4);
+    }
+  }
+}
+
+.tab-icon {
+  font-size: var(--text-base);
+}
+
+.tab-label {
+  white-space: nowrap;
+}
+
+// ===== 内容区域 =====
+.popup-content {
+  flex: 1;
+  overflow: hidden;
+  background: var(--theme-bg-primary);
+}
+
+.content-container {
+  height: 100%;
+  padding: var(--space-6);
+  overflow-y: auto;
+  
+  // 自定义滚动条
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--theme-border-secondary);
+    border-radius: var(--radius-full);
+
+    &:hover {
+      background: var(--theme-text-tertiary);
+    }
+  }
+}
+
+// ===== 设置卡片 =====
+.setting-card {
+  background: var(--theme-bg-secondary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--theme-shadow-sm);
+  transition: all var(--duration-normal) var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--theme-shadow-md);
+    transform: translateY(-1px);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.setting-header {
+  margin-bottom: var(--space-4);
+}
+
+.setting-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--theme-text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.setting-description {
+  font-size: var(--text-sm);
+  color: var(--theme-text-secondary);
+  margin: 0;
+  line-height: var(--leading-relaxed);
+}
+
+.setting-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// ===== 现代化开关 =====
+.modern-switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.switch-info {
+  flex: 1;
+}
+
+.switch-label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--theme-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.switch-description {
+  font-size: var(--text-xs);
+  color: var(--theme-text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.modern-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--theme-border-secondary);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+
+  &:hover {
+    background: var(--theme-border-primary);
+  }
+
+  &.checked {
+    background: var(--gradient-primary);
+
+    .switch-thumb {
+      transform: translateX(20px);
+    }
+  }
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-normal) var(--ease-out-cubic);
+}
+
+// ===== 现代化选择器 =====
+.modern-select-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.select-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--theme-text-primary);
+}
+
+.modern-select {
+  position: relative;
+}
+
+.select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: var(--radius-lg);
+  color: var(--theme-text-primary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    border-color: var(--theme-border-focus);
+    box-shadow: 0 0 0 3px var(--theme-focus-ring);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--theme-border-focus);
+    box-shadow: 0 0 0 3px var(--theme-focus-ring);
+  }
+}
+
+.select-value {
+  flex: 1;
+  text-align: left;
+}
+
+.select-arrow {
+  transition: transform var(--duration-fast) var(--ease-out);
+  
+  .modern-select.open & {
+    transform: rotate(180deg);
+  }
+}
+
+.select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--theme-shadow-lg);
+  margin-top: var(--space-1);
+  overflow: hidden;
+  z-index: var(--z-dropdown);
+  animation: fadeInScale var(--duration-fast) var(--ease-spring);
+}
+
+.select-option {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  border: none;
+  color: var(--theme-text-primary);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--theme-hover-bg);
+  }
+
+  &.selected {
+    background: var(--primary-50);
+    color: var(--primary-700);
+    font-weight: var(--font-medium);
+  }
+}
+
+// ===== 底部区域 =====
+.popup-footer {
+  padding: var(--space-4) var(--space-6);
+  background: var(--theme-bg-secondary);
+  border-top: 1px solid var(--theme-border-primary);
+}
+
+.modern-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footer-links {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--theme-text-secondary);
+  text-decoration: none;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    color: var(--theme-text-primary);
+    background: var(--theme-hover-bg);
+    transform: translateY(-1px);
+  }
+}
+
+.link-icon {
+  font-size: var(--text-sm);
+}
+
+.footer-info {
+  text-align: center;
+}
+
+.footer-text {
+  font-size: var(--text-xs);
+  color: var(--theme-text-tertiary);
+}

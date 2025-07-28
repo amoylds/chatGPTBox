@@ -1,0 +1,267 @@
+// 现代化主题系统
+// Modern Theme System for ChatGPTBox
+
+@import './design-tokens.scss';
+
+// ===== 浅色主题 (Light Theme) =====
+[data-theme='light'] {
+  // 基础颜色映射
+  --theme-bg-primary: var(--neutral-50);
+  --theme-bg-secondary: var(--neutral-100);
+  --theme-bg-tertiary: var(--neutral-200);
+  
+  --theme-text-primary: var(--neutral-900);
+  --theme-text-secondary: var(--neutral-700);
+  --theme-text-tertiary: var(--neutral-500);
+  --theme-text-inverse: var(--neutral-50);
+  
+  --theme-border-primary: var(--neutral-200);
+  --theme-border-secondary: var(--neutral-300);
+  --theme-border-focus: var(--primary-500);
+  
+  // 交互状态
+  --theme-hover-bg: var(--neutral-100);
+  --theme-active-bg: var(--neutral-200);
+  --theme-focus-ring: rgba(99, 102, 241, 0.2);
+  
+  // 毛玻璃效果
+  --theme-glass-bg: var(--glass-light);
+  --theme-glass-border: var(--glass-border-light);
+  --theme-backdrop-blur: var(--glass-backdrop);
+  
+  // 阴影
+  --theme-shadow-sm: var(--shadow-sm);
+  --theme-shadow-md: var(--shadow-md);
+  --theme-shadow-lg: var(--shadow-lg);
+  --theme-shadow-xl: var(--shadow-xl);
+  
+  // 特殊组件颜色
+  --toolbar-bg: var(--neutral-50);
+  --toolbar-text: var(--neutral-900);
+  --toolbar-hover: var(--neutral-100);
+  --toolbar-border: var(--neutral-200);
+  
+  --popup-bg: var(--neutral-50);
+  --popup-border: var(--neutral-200);
+  --popup-shadow: var(--shadow-xl);
+  
+  --chat-bg: var(--neutral-50);
+  --chat-border: var(--neutral-200);
+  --chat-user-bg: var(--gradient-primary);
+  --chat-assistant-bg: var(--neutral-100);
+  
+  --input-bg: var(--neutral-50);
+  --input-border: var(--neutral-300);
+  --input-focus-border: var(--primary-500);
+  --input-placeholder: var(--neutral-400);
+  
+  // 状态颜色
+  --status-success: var(--success-500);
+  --status-warning: var(--warning-500);
+  --status-error: var(--error-500);
+  --status-info: var(--primary-500);
+}
+
+// ===== 深色主题 (Dark Theme) =====
+[data-theme='dark'] {
+  // 基础颜色映射
+  --theme-bg-primary: var(--neutral-900);
+  --theme-bg-secondary: var(--neutral-800);
+  --theme-bg-tertiary: var(--neutral-700);
+  
+  --theme-text-primary: var(--neutral-100);
+  --theme-text-secondary: var(--neutral-300);
+  --theme-text-tertiary: var(--neutral-500);
+  --theme-text-inverse: var(--neutral-900);
+  
+  --theme-border-primary: var(--neutral-700);
+  --theme-border-secondary: var(--neutral-600);
+  --theme-border-focus: var(--primary-400);
+  
+  // 交互状态
+  --theme-hover-bg: var(--neutral-800);
+  --theme-active-bg: var(--neutral-700);
+  --theme-focus-ring: rgba(129, 140, 248, 0.3);
+  
+  // 毛玻璃效果
+  --theme-glass-bg: var(--glass-dark);
+  --theme-glass-border: var(--glass-border-dark);
+  --theme-backdrop-blur: var(--glass-backdrop);
+  
+  // 阴影 (深色主题下的阴影更深)
+  --theme-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --theme-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --theme-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  
+  // 特殊组件颜色
+  --toolbar-bg: var(--neutral-800);
+  --toolbar-text: var(--neutral-100);
+  --toolbar-hover: var(--neutral-700);
+  --toolbar-border: var(--neutral-600);
+  
+  --popup-bg: var(--neutral-900);
+  --popup-border: var(--neutral-700);
+  --popup-shadow: var(--theme-shadow-xl);
+  
+  --chat-bg: var(--neutral-900);
+  --chat-border: var(--neutral-700);
+  --chat-user-bg: var(--gradient-primary);
+  --chat-assistant-bg: var(--neutral-800);
+  
+  --input-bg: var(--neutral-800);
+  --input-border: var(--neutral-600);
+  --input-focus-border: var(--primary-400);
+  --input-placeholder: var(--neutral-500);
+  
+  // 状态颜色 (深色主题下稍微调亮)
+  --status-success: var(--success-400);
+  --status-warning: var(--warning-400);
+  --status-error: var(--error-400);
+  --status-info: var(--primary-400);
+}
+
+// ===== 自动主题 (Auto Theme) =====
+[data-theme='auto'] {
+  @media (prefers-color-scheme: light) {
+    // 继承浅色主题的所有变量
+    --theme-bg-primary: var(--neutral-50);
+    --theme-bg-secondary: var(--neutral-100);
+    --theme-bg-tertiary: var(--neutral-200);
+    
+    --theme-text-primary: var(--neutral-900);
+    --theme-text-secondary: var(--neutral-700);
+    --theme-text-tertiary: var(--neutral-500);
+    --theme-text-inverse: var(--neutral-50);
+    
+    --theme-border-primary: var(--neutral-200);
+    --theme-border-secondary: var(--neutral-300);
+    --theme-border-focus: var(--primary-500);
+    
+    --theme-hover-bg: var(--neutral-100);
+    --theme-active-bg: var(--neutral-200);
+    --theme-focus-ring: rgba(99, 102, 241, 0.2);
+    
+    --theme-glass-bg: var(--glass-light);
+    --theme-glass-border: var(--glass-border-light);
+    --theme-backdrop-blur: var(--glass-backdrop);
+    
+    --theme-shadow-sm: var(--shadow-sm);
+    --theme-shadow-md: var(--shadow-md);
+    --theme-shadow-lg: var(--shadow-lg);
+    --theme-shadow-xl: var(--shadow-xl);
+    
+    --toolbar-bg: var(--neutral-50);
+    --toolbar-text: var(--neutral-900);
+    --toolbar-hover: var(--neutral-100);
+    --toolbar-border: var(--neutral-200);
+    
+    --popup-bg: var(--neutral-50);
+    --popup-border: var(--neutral-200);
+    --popup-shadow: var(--shadow-xl);
+    
+    --chat-bg: var(--neutral-50);
+    --chat-border: var(--neutral-200);
+    --chat-user-bg: var(--gradient-primary);
+    --chat-assistant-bg: var(--neutral-100);
+    
+    --input-bg: var(--neutral-50);
+    --input-border: var(--neutral-300);
+    --input-focus-border: var(--primary-500);
+    --input-placeholder: var(--neutral-400);
+    
+    --status-success: var(--success-500);
+    --status-warning: var(--warning-500);
+    --status-error: var(--error-500);
+    --status-info: var(--primary-500);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    // 继承深色主题的所有变量
+    --theme-bg-primary: var(--neutral-900);
+    --theme-bg-secondary: var(--neutral-800);
+    --theme-bg-tertiary: var(--neutral-700);
+    
+    --theme-text-primary: var(--neutral-100);
+    --theme-text-secondary: var(--neutral-300);
+    --theme-text-tertiary: var(--neutral-500);
+    --theme-text-inverse: var(--neutral-900);
+    
+    --theme-border-primary: var(--neutral-700);
+    --theme-border-secondary: var(--neutral-600);
+    --theme-border-focus: var(--primary-400);
+    
+    --theme-hover-bg: var(--neutral-800);
+    --theme-active-bg: var(--neutral-700);
+    --theme-focus-ring: rgba(129, 140, 248, 0.3);
+    
+    --theme-glass-bg: var(--glass-dark);
+    --theme-glass-border: var(--glass-border-dark);
+    --theme-backdrop-blur: var(--glass-backdrop);
+    
+    --theme-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --theme-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --theme-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    
+    --toolbar-bg: var(--neutral-800);
+    --toolbar-text: var(--neutral-100);
+    --toolbar-hover: var(--neutral-700);
+    --toolbar-border: var(--neutral-600);
+    
+    --popup-bg: var(--neutral-900);
+    --popup-border: var(--neutral-700);
+    --popup-shadow: var(--theme-shadow-xl);
+    
+    --chat-bg: var(--neutral-900);
+    --chat-border: var(--neutral-700);
+    --chat-user-bg: var(--gradient-primary);
+    --chat-assistant-bg: var(--neutral-800);
+    
+    --input-bg: var(--neutral-800);
+    --input-border: var(--neutral-600);
+    --input-focus-border: var(--primary-400);
+    --input-placeholder: var(--neutral-500);
+    
+    --status-success: var(--success-400);
+    --status-warning: var(--warning-400);
+    --status-error: var(--error-400);
+    --status-info: var(--primary-400);
+  }
+}
+
+// ===== 全局基础样式 =====
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  line-height: var(--leading-normal);
+  color: var(--theme-text-primary);
+  background-color: var(--theme-bg-primary);
+  transition: var(--transition-colors);
+}
+
+// ===== 滚动条样式 =====
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-border-secondary);
+  border-radius: var(--radius-full);
+  
+  &:hover {
+    background: var(--theme-text-tertiary);
+  }
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}

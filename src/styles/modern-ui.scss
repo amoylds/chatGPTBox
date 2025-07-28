@@ -1,0 +1,384 @@
+// 现代化UI主样式文件
+// Modern UI Main Stylesheet for ChatGPTBox
+
+// ===== 导入基础样式系统 =====
+@import './design-tokens.scss';
+@import './themes.scss';
+@import './animations.scss';
+
+// ===== 导入组件样式 =====
+@import '../components/ModernPopup/ModernPopup.scss';
+@import '../components/ModernChatBox/ModernChatBox.scss';
+@import '../components/ModernSelectionToolbar/ModernSelectionToolbar.scss';
+@import '../components/ModernSidebar/ModernSidebar.scss';
+
+// ===== 全局重置和基础样式 =====
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--theme-text-primary);
+  background-color: var(--theme-bg-primary);
+  transition: var(--transition-colors);
+  overflow-x: hidden;
+}
+
+// ===== 通用工具类 =====
+
+// 布局工具类
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+// 间距工具类
+.p-0 { padding: 0; }
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+
+.m-0 { margin: 0; }
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-5 { margin: var(--space-5); }
+.m-6 { margin: var(--space-6); }
+
+// 文本工具类
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+
+.font-normal { font-weight: var(--font-normal); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+// 颜色工具类
+.text-primary { color: var(--theme-text-primary); }
+.text-secondary { color: var(--theme-text-secondary); }
+.text-tertiary { color: var(--theme-text-tertiary); }
+
+.bg-primary { background-color: var(--theme-bg-primary); }
+.bg-secondary { background-color: var(--theme-bg-secondary); }
+.bg-tertiary { background-color: var(--theme-bg-tertiary); }
+
+// 圆角工具类
+.rounded-none { border-radius: var(--radius-none); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded { border-radius: var(--radius-base); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+// 阴影工具类
+.shadow-none { box-shadow: var(--shadow-none); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow { box-shadow: var(--shadow-base); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+
+// ===== 现代化按钮组件 =====
+.modern-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: var(--font-primary);
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--theme-focus-ring);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  // 按钮变体
+  &.primary {
+    background: var(--gradient-primary);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+  }
+
+  &.secondary {
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+    border-color: var(--theme-border-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--theme-hover-bg);
+      border-color: var(--theme-border-focus);
+    }
+  }
+
+  &.ghost {
+    background: transparent;
+    color: var(--theme-text-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--theme-hover-bg);
+    }
+  }
+
+  &.danger {
+    background: var(--gradient-error);
+    color: white;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+  }
+
+  // 尺寸变体
+  &.sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+  }
+
+  &.lg {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--text-base);
+  }
+
+  // 图标按钮
+  &.icon-only {
+    padding: var(--space-3);
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// ===== 现代化输入框组件 =====
+.modern-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: var(--radius-lg);
+  color: var(--theme-text-primary);
+  font-size: var(--text-sm);
+  font-family: var(--font-primary);
+  line-height: var(--leading-normal);
+  transition: all var(--duration-fast) var(--ease-out);
+
+  &:focus {
+    outline: none;
+    border-color: var(--theme-border-focus);
+    box-shadow: 0 0 0 3px var(--theme-focus-ring);
+  }
+
+  &::placeholder {
+    color: var(--theme-text-tertiary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.error {
+    border-color: var(--error-500);
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+// ===== 现代化卡片组件 =====
+.modern-card {
+  background: var(--theme-bg-secondary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--duration-normal) var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .card-header {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--theme-border-primary);
+    background: var(--theme-bg-primary);
+  }
+
+  .card-content {
+    padding: var(--space-6);
+  }
+
+  .card-footer {
+    padding: var(--space-4) var(--space-6);
+    background: var(--theme-bg-tertiary);
+    border-top: 1px solid var(--theme-border-primary);
+  }
+}
+
+// ===== 现代化通知组件 =====
+.modern-notification {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: slideInRight var(--duration-normal) var(--ease-spring);
+
+  &.success {
+    background: var(--success-50);
+    border-color: var(--success-200);
+    color: var(--success-800);
+  }
+
+  &.warning {
+    background: var(--warning-50);
+    border-color: var(--warning-200);
+    color: var(--warning-800);
+  }
+
+  &.error {
+    background: var(--error-50);
+    border-color: var(--error-200);
+    color: var(--error-800);
+  }
+
+  &.info {
+    background: var(--primary-50);
+    border-color: var(--primary-200);
+    color: var(--primary-800);
+  }
+}
+
+// ===== 响应式断点 =====
+@media (max-width: 640px) {
+  .modern-btn {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+  }
+
+  .modern-card {
+    .card-header,
+    .card-content {
+      padding: var(--space-4);
+    }
+  }
+}
+
+// ===== 可访问性增强 =====
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .modern-btn {
+    border-width: 2px;
+  }
+
+  .modern-input {
+    border-width: 2px;
+  }
+
+  .modern-card {
+    border-width: 2px;
+  }
+}
+
+// ===== 打印样式 =====
+@media print {
+  .modern-popup,
+  .modern-selection-toolbar,
+  .modern-sidebar {
+    display: none !important;
+  }
+
+  .modern-chat-container {
+    background: white !important;
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+  }
+}
