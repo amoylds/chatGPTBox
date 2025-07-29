@@ -159,7 +159,25 @@
   height: 100%;
   padding: var(--space-6);
   overflow-y: auto;
-  
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+
+  // 确保所有文本内容正确换行
+  * {
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  // 特殊处理长文本
+  p, div, span, label {
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    max-width: 100%;
+  }
+
   // 自定义滚动条
   &::-webkit-scrollbar {
     width: 6px;
@@ -188,6 +206,9 @@
   margin-bottom: var(--space-4);
   box-shadow: var(--theme-shadow-sm);
   transition: all var(--duration-normal) var(--ease-out);
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
 
   &:hover {
     box-shadow: var(--theme-shadow-md);
@@ -196,6 +217,15 @@
 
   &:last-child {
     margin-bottom: 0;
+  }
+
+  // 确保所有内容正确换行
+  * {
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
   }
 }
 
@@ -208,6 +238,10 @@
   font-weight: var(--font-semibold);
   color: var(--theme-text-primary);
   margin: 0 0 var(--space-2) 0;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .setting-description {
@@ -215,6 +249,10 @@
   color: var(--theme-text-secondary);
   margin: 0;
   line-height: var(--leading-relaxed);
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .setting-content {
@@ -241,12 +279,20 @@
   font-weight: var(--font-medium);
   color: var(--theme-text-primary);
   margin-bottom: var(--space-1);
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .switch-description {
   font-size: var(--text-xs);
   color: var(--theme-text-secondary);
   line-height: var(--leading-relaxed);
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .modern-switch {

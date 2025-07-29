@@ -16,15 +16,18 @@ import DeleteButton from '../../components/DeleteButton'
 import { openUrl } from '../../utils/index.mjs'
 import Browser from 'webextension-polyfill'
 import FileSaver from 'file-saver'
+import { ModernSidebar } from '../../components/ModernUI'
+import '../../styles/modern-ui.scss'
 
 function App() {
   const { t } = useTranslation()
-  const [collapsed, setCollapsed] = useState(true)
-  const config = useConfig(null, false)
+  const [collapsed, setCollapsed] = useState(false) // 默认展开侧边栏
+  const [config] = useConfig()
   const [sessions, setSessions] = useState([])
   const [sessionId, setSessionId] = useState(null)
   const [currentSession, setCurrentSession] = useState(null)
   const [renderContent, setRenderContent] = useState(false)
+  const [useModernUI, setUseModernUI] = useState(true) // 启用现代化UI
   const currentPort = useRef(null)
 
   const setSessionIdSafe = async (sessionId) => {
@@ -43,8 +46,10 @@ function App() {
   }
 
   useEffect(() => {
-    document.documentElement.dataset.theme = config.themeMode
-  }, [config.themeMode])
+    document.documentElement.dataset.theme = config?.themeMode || 'auto'
+    // 检查是否启用现代化UI
+    setUseModernUI(config?.enableModernUI !== false)
+  }, [config])
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -103,6 +108,75 @@ function App() {
     await setSessionIdSafe(sessions[0].sessionId)
   }
 
+  // 转换sessions为现代化UI格式
+  const modernConversations = sessions.map(session => ({
+    id: session.sessionId,
+    title: session.sessionName || t('New Conversation'),
+    messageCount: session.conversationRecords?.length || 0,
+    lastUpdated: new Date().toLocaleDateString(),
+    preview: session.conversationRecords?.[0]?.text?.substring(0, 50) || ''
+  }))
+
+  // 现代化UI渲染
+  if (useModernUI) {
+    return (
+      <div className="modern-independent-panel" data-theme={config?.themeMode || 'auto'}>
+        <div className="modern-chat-layout">
+          <ModernSidebar
+            conversations={modernConversations}
+            activeConversationId={sessionId}
+            onConversationSelect={(conversation) => setSessionIdSafe(conversation.id)}
+            onConversationDelete={(conversationId) => {
+              deleteSession(conversationId).then((sessions) => {
+                setSessions(sessions)
+                if (sessions.length > 0) {
+                  setSessionIdSafe(sessions[0].sessionId)
+                }
+              })
+            }}
+            onConversationRename={(conversationId, newTitle) => {
+              // TODO: 实现重命名功能
+              console.log('Rename conversation:', conversationId, newTitle)
+            }}
+            onNewConversation={createNewChat}
+            isOpen={!collapsed}
+            onToggle={toggleSidebar}
+            width={320}
+            className="independent-sidebar"
+          />
+          <div className="modern-chat-main">
+            {renderContent && currentSession && currentSession.conversationRecords ? (
+              <div className="chatgptbox-container modern-chat-container">
+                <ConversationCard
+                  session={currentSession}
+                  notClampSize={true}
+                  pageMode={true}
+                  onUpdate={(port, session, cData) => {
+                    currentPort.current = port
+                    if (cData.length > 0 && cData[cData.length - 1].done) {
+                      updateSession(session).then(setSessions)
+                      setCurrentSession(session)
+                    }
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="empty-chat-state">
+                <div className="empty-icon">💬</div>
+                <h2>{t('Welcome to ChatGPTBox')}</h2>
+                <p>{t('Select a conversation from the sidebar or start a new one')}</p>
+                <button className="modern-btn primary" onClick={createNewChat}>
+                  {t('Start New Conversation')}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // 传统UI渲染（保持向后兼容）
   return (
     <div className="IndependentPanel">
       <div className="chat-container">
@@ -128,7 +202,7 @@ function App() {
                 <button
                   key={index}
                   className={`normal-button ${sessionId === session.sessionId ? 'active' : ''}`}
-                  style="display: flex; align-items: center; justify-content: space-between;"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
                   onClick={() => {
                     setSessionIdSafe(session.sessionId)
                   }}
@@ -165,7 +239,7 @@ function App() {
         </div>
         <div className="chat-content">
           {renderContent && currentSession && currentSession.conversationRecords && (
-            <div className="chatgptbox-container" style="height:100%;">
+            <div className="chatgptbox-container" style={{ height: '100%' }}>
               <ConversationCard
                 session={currentSession}
                 notClampSize={true}

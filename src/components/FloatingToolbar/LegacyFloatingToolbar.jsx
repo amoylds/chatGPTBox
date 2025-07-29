@@ -20,7 +20,9 @@ function FloatingToolbar(props) {
   const [position, setPosition] = useState(getClientPosition(props.container))
   const [virtualPosition, setVirtualPosition] = useState({ x: 0, y: 0 })
   const windowSize = useClampWindowSize([750, 1500], [0, Infinity])
-  const config = useConfig(() => {
+  const [config] = useConfig()
+
+  useEffect(() => {
     setRender(true)
     if (!triggered && selection) {
       props.container.style.position = 'absolute'
@@ -32,7 +34,7 @@ function FloatingToolbar(props) {
         props.container.style.left = left + 'px'
       })
     }
-  })
+  }, [triggered, selection, position.x])
 
   useEffect(() => {
     if (isMobile()) {
