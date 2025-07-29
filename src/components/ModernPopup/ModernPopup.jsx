@@ -50,24 +50,33 @@ ModernBrandSection.propTypes = {
 }
 
 // 现代化底部信息栏组件
-function ModernFooter() {
+function ModernFooter({ currentVersion = '', latestVersion = '' }) {
   const { t } = useTranslation()
-  
+
   return (
     <div className="modern-footer">
       <div className="footer-links">
-        <a 
-          href="https://github.com/josStorer/chatGPTBox" 
-          target="_blank" 
+        <a
+          href="https://github.com/josStorer/chatGPTBox"
+          target="_blank"
           rel="noopener noreferrer"
           className="footer-link"
         >
           <span className="link-icon">⭐</span>
           {t('Star on GitHub')}
         </a>
-        <a 
-          href="https://github.com/josStorer/chatGPTBox/issues" 
-          target="_blank" 
+        <a
+          href="https://github.com/josStorer/chatGPTBox/releases"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-link"
+        >
+          <span className="link-icon">📋</span>
+          {t('Changelog')}
+        </a>
+        <a
+          href="https://github.com/josStorer/chatGPTBox/issues"
+          target="_blank"
           rel="noopener noreferrer"
           className="footer-link"
         >
@@ -76,10 +85,31 @@ function ModernFooter() {
         </a>
       </div>
       <div className="footer-info">
+        {currentVersion && (
+          <div className="version-info">
+            <span className="version-label">{t('Version')}:</span>
+            <span className="version-current">{currentVersion}</span>
+            {currentVersion < latestVersion && (
+              <a
+                href={`https://github.com/josStorer/chatGPTBox/releases/tag/v${latestVersion}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="version-update"
+              >
+                {t('Update to')} {latestVersion}
+              </a>
+            )}
+          </div>
+        )}
         <span className="footer-text">{t('Made with ❤️ for productivity')}</span>
       </div>
     </div>
   )
+}
+
+ModernFooter.propTypes = {
+  currentVersion: PropTypes.string,
+  latestVersion: PropTypes.string
 }
 
 // 设置卡片组件
@@ -187,7 +217,7 @@ ModernSelect.propTypes = {
 }
 
 // 主弹出窗口组件
-export function ModernPopup({ children, activeTab, onTabChange, tabs }) {
+export function ModernPopup({ children, activeTab, onTabChange, tabs, currentVersion, latestVersion }) {
   const [version, setVersion] = useState('')
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -225,7 +255,7 @@ export function ModernPopup({ children, activeTab, onTabChange, tabs }) {
 
       {/* 底部区域 */}
       <div className="popup-footer">
-        <ModernFooter />
+        <ModernFooter currentVersion={currentVersion || version} latestVersion={latestVersion || version} />
       </div>
     </div>
   )
@@ -239,7 +269,9 @@ ModernPopup.propTypes = {
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     icon: PropTypes.string
-  })).isRequired
+  })).isRequired,
+  currentVersion: PropTypes.string,
+  latestVersion: PropTypes.string
 }
 
 // 导出所有组件

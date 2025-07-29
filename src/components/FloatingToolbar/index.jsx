@@ -9,12 +9,12 @@ import LegacyFloatingToolbar from './LegacyFloatingToolbar'
 
 function FloatingToolbar(props) {
   const [config] = useConfig()
-  const [useModernUI, setUseModernUI] = useState(false)
+  const [useModernUI, setUseModernUI] = useState(true) // 默认启用现代化UI
 
   useEffect(() => {
     // 检查是否启用现代化UI
     // 可以通过配置项或者其他条件来决定
-    const shouldUseModernUI = config.enableModernUI !== false // 默认启用现代化UI
+    const shouldUseModernUI = config?.enableModernUI !== false // 默认启用现代化UI
     setUseModernUI(shouldUseModernUI)
   }, [config])
 

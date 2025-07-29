@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import {
   defaultConfig,
   getPreferredLanguageKey,
@@ -18,66 +17,7 @@ import { ModernPopup } from '../components/ModernUI'
 import './styles.scss'
 import '../styles/modern-ui.scss'
 
-// 现代化底部信息组件
-function ModernFooter({ currentVersion, latestVersion }) {
-  const { t } = useTranslation()
 
-  return (
-    <div className="modern-footer">
-      <div className="footer-links">
-        <a
-          href="https://github.com/josStorer/chatGPTBox"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="footer-link"
-        >
-          <span className="link-icon">⭐</span>
-          {t('Star on GitHub')}
-        </a>
-        <a
-          href="https://github.com/josStorer/chatGPTBox/releases"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="footer-link"
-        >
-          <span className="link-icon">📋</span>
-          {t('Changelog')}
-        </a>
-        <a
-          href="https://github.com/josStorer/chatGPTBox/issues"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="footer-link"
-        >
-          <span className="link-icon">🐛</span>
-          {t('Report Issue')}
-        </a>
-      </div>
-      <div className="footer-info">
-        <div className="version-info">
-          <span className="version-label">{t('Version')}:</span>
-          <span className="version-current">{currentVersion}</span>
-          {currentVersion < latestVersion && (
-            <a
-              href={`https://github.com/josStorer/chatGPTBox/releases/tag/v${latestVersion}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="version-update"
-            >
-              {t('Update to')} {latestVersion}
-            </a>
-          )}
-        </div>
-        <span className="footer-text">{t('Made with ❤️ for productivity')}</span>
-      </div>
-    </div>
-  )
-}
-
-ModernFooter.propTypes = {
-  currentVersion: PropTypes.string.isRequired,
-  latestVersion: PropTypes.string.isRequired
-}
 
 function Popup() {
   const { t, i18n } = useTranslation()
@@ -164,18 +104,10 @@ function Popup() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         tabs={tabs}
+        currentVersion={currentVersion}
+        latestVersion={latestVersion}
       >
-        <div className="tab-content">
-          {renderTabContent()}
-        </div>
-
-        {/* 自定义底部 */}
-        <div className="custom-footer">
-          <ModernFooter
-            currentVersion={currentVersion}
-            latestVersion={latestVersion}
-          />
-        </div>
+        {renderTabContent()}
       </ModernPopup>
     </div>
   )

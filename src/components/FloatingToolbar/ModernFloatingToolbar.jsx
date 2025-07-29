@@ -20,7 +20,9 @@ function ModernFloatingToolbar(props) {
   const [isGenerating, setIsGenerating] = useState(false)
   const windowSize = useClampWindowSize([750, 1500], [0, Infinity])
   
-  const config = useConfig(() => {
+  const [config] = useConfig()
+
+  useEffect(() => {
     setRender(true)
     if (!triggered && selection) {
       props.container.style.position = 'absolute'
@@ -33,7 +35,7 @@ function ModernFloatingToolbar(props) {
         setVirtualPosition({ x: left, y: top })
       }, 200)
     }
-  })
+  }, [triggered, selection, position.x, position.y, windowSize])
 
   useEffect(() => {
     setSelection(props.selection)
