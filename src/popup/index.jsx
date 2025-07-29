@@ -7,6 +7,7 @@ import Browser from 'webextension-polyfill'
 
 getUserConfig().then(async (config) => {
   if (config.clickIconAction === 'popup' || (window.innerWidth > 100 && window.innerHeight > 100)) {
+    // 使用现代化UI版本的Popup
     render(<Popup />, document.getElementById('app'))
   } else {
     const message = {
